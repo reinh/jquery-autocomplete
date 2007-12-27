@@ -9,6 +9,11 @@
 	<meta name="author" content="Yehuda Katz">
   <script src="jquery.min.js"></script>
   <script src="jquery.ui.autocomplete.js"></script>
+  <script>
+    $(function() {
+      $("input.autocomplete").autocomplete();
+    })
+  </script>
 </head>
 <body>
   <input type="text" class="autocomplete" />

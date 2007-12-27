@@ -14,11 +14,13 @@
   $.ui.autocomplete = {};
   
   $.fn.autocomplete = function(options) {
-  
-    $.extend({
+    
+    options = $.extend({}, {
       timeout: 1000,
       list: []
     }, options);
+  
+    console.dir(options);
   
     return this.each(function() {
   
@@ -28,10 +30,11 @@
           if(typingTimeout) window.clearInterval(typingTimeout);
           $.data(this, "typingTimeout", setTimeout(function() { 
             $(e.target).trigger("autocomplete"); 
-          }), options.timeout);
+          }, options.timeout));
+          console.log($.data(this, "typingTimeout"));
         })
         .bind("autocomplete", function() {
-          // autocomplete code here
+          console.log("Hello");
         });
 
     });
