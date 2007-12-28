@@ -12,21 +12,27 @@
   
   $.ui = $.ui || {};
   $.ui.autocomplete = {};
-  
+    
   $.fn.autocompleteMode = function(container, input, size) {
     var original = input.val();
     var selected = -1;
+    var self = this;
+    $.data(this[0], "autocompleteMode", true);
+  
+    var autocompleteModeOff = function() {
+      container.remove();
+      $.data(document.body, "autocompleteMode", false);
+      $.data(document.body, "suppressKey", true);    
+    };
     
     input
-      .blur(function() { container.remove(); })
+      .blur(function() { self.autocompleteModeOff(container); })
       .keydown(function(e) {
         if(e.which == 27) { 
           input.val(original); 
-          container.remove();
-          $.data(input[0], "suppressKey", true);
+          autocompleteModeOff();
         } else if(e.which == 13) { 
-          container.remove(); 
-          $.data(input[0], "suppressKey", true);
+          autocompleteModeOff();
         } else if(e.which == 40 || e.which == 9 || e.which == 38) {
           switch(e.which) {
             case 40: 
@@ -50,7 +56,7 @@
       getList: function() { return opt.list; },
       template: function(str) { return "<li>" + str + "</li>"; },
       match: function(typed) { return !!this.match(new RegExp(typed)); },
-      wrapper: "<ul class='jq-ui-autocomplete'></ul>",
+      wrapper: "<ul class='jq-ui-autocomplete'></ul>"
     }, opt);
   
     return this.each(function() {
@@ -59,8 +65,9 @@
         .keypress(function(e) {
           var typingTimeout = $.data(this, "typingTimeout");
           if(typingTimeout) window.clearInterval(typingTimeout);
-          if($.data(this, "justCanceled")) $.data(this, "justCanceled", false);
-          else if($.data(this, "suppressKey")) { return $.data(this, "suppressKey", false); }
+          
+          if($.data(this, "suppressKey")) { return $.data(this, "suppressKey", false); }
+          else if($.data(document.body, "autocompleteMode")) return;          
           else {
             $.data(this, "typingTimeout", setTimeout(function() { 
               $(e.target).trigger("autocomplete"); 
