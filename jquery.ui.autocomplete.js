@@ -20,7 +20,7 @@
       getList: function() { return opt.list; },
       template: function(str) { return "<li>" + str + "</li>"; },
       match: function(typed) { return !!this.match(new RegExp(typed)); },
-      wrapper: "<ul></ul>",
+      wrapper: "<ul class='jq-ui-autocomplete'></ul>",
       emptyList: "None"
     }, opt);
   
@@ -35,12 +35,22 @@
           }, opt.timeout));
         })
         .bind("autocomplete", function() {
-          var self = this;
+          var self = $(this);
           var list = $(opt.getList())
-            .filter(function() { return opt.match.call(this, $(self).val()); })
+            .filter(function() { return opt.match.call(this, self.val()); })
             .map(function() { return opt.template(this); }).get().join("");
+            
           var container = $(list || opt.template(opt.emptyList))
             .wrapAll(opt.wrapper).parents(":last").children();
+            
+          var offset = self.offset();
+          if(opt.container) opt.container.remove();
+          
+          opt.container = container.css({
+            top: offset.top + self.outerHeight(),
+            left: offset.left,
+            width: self.width()
+          }).appendTo("body");
         });
 
     });
