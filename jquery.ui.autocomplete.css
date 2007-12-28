@@ -1,6 +1,6 @@
 ul.jq-ui-autocomplete {
     position:absolute;
-    width:200px;
+    width:16em;
     background-color:#FFFFFF;
     border:1px solid #AAAAAA;
     margin:0px;
@@ -11,6 +11,4 @@ ul.jq-ui-autocomplete {
 }
 ul.jq-ui-autocomplete li { display:block; padding: .2em .3em .3em;}
 
-ul.jq-ui-autocomplete li.selected,
-ul.jq-ui-autocomplete li.hover,
-ul.jq-ui-autocomplete li:hover { background-color: #3875d7; color: #FFFFFF; }
+ul.jq-ui-autocomplete li.active { background-color: #3875d7; color: #FFFFFF; }
