@@ -19,7 +19,8 @@
         template: function(obj) { return "<li>" + obj.text + "</li>"; },
         match: function(typed) { return this.text.match(new RegExp(typed)); },        
       })
-        .bind("itemSelected", function(e, d) { console.log("Hello"); });
+        .bind("activate.autocomplete", function(e, d) { console.log(d); })
+        .bind("cancel.autocomplete", function(e) { console.log("Cancelled") });
     });
   </script>
 </head>

@@ -10,14 +10,20 @@
 
 (function($) {
   
-  $.ui = $.ui || {}; $.ui.autocomplete = $.ui.autocomplete || {};
+  $.ui = $.ui || {}; $.ui.autocomplete = $.ui.autocomplete || {}; var active;
     
   $.fn.autocompleteMode = function(container, input, size) {
     var original = input.val(); var selected = -1; var self = this;
     
     $.data(document.body, "autocompleteMode", true);
 
-    $("body").one("cancel.autocomplete", function() { $("body").trigger("off.autocomplete"); input.val(original); });
+    $("body").one("cancel.autocomplete", function() { 
+      input.trigger("cancel.autocomplete"); $("body").trigger("off.autocomplete"); input.val(original); 
+    });
+    
+    $("body").one("activate.autocomplete", function() {
+      input.trigger("activate.autocomplete", [$.data(active[0], "originalObject")]); $("body").trigger("off.autocomplete");
+    });
     
     $("body").one("off.autocomplete", function(e, reset) {
       container.remove();
@@ -30,8 +36,8 @@
     $(window).bind("click.autocomplete", function() { $("body").trigger("cancel.autocomplete"); });
 
     var select = function() {
-      var active = $("> *", container).removeClass("active").slice(selected, selected + 1).addClass("active");
-      input.trigger("itemSelected", [$.data(active[0], "originalObject")]);     
+      active = $("> *", container).removeClass("active").slice(selected, selected + 1).addClass("active");
+      input.trigger("itemSelected.autocomplete", [$.data(active[0], "originalObject")]);     
       input.val(active.html());
     };
     
@@ -41,13 +47,13 @@
       // Set the selected item to the item hovered over and make it active
       selected = $("> *", container).index(e.target); select();
     }).bind("click.autocomplete", function(e) {
-      $("body").trigger("off.autocomplete"); $.data(document.body, "suppressKey", false); 
+      $("body").trigger("activate.autocomplete"); $.data(document.body, "suppressKey", false); 
     });
     
     input
       .bind("keydown.autocomplete", function(e) {
         if(e.which == 27) { $("body").trigger("cancel.autocomplete"); }
-        else if(e.which == 13) { $("body").trigger("off.autocomplete"); }
+        else if(e.which == 13) { $("body").trigger("activate.autocomplete"); }
         else if(e.which == 40 || e.which == 9 || e.which == 38) {
           switch(e.which) {
             case 40: 
