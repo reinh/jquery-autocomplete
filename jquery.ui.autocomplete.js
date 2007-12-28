@@ -43,7 +43,7 @@
       activate();
     }).click(function(e) { $("body").trigger("autocompleteModeOff", [false, true]); return false; });
     
-    $("body")
+    input
       .bind("keydown.autocomplete", function(e) {
         if(e.which == 27) {  $("body").trigger("autocompleteModeOff", [true]); }
         else if(e.which == 13) { $("body").trigger("autocompleteModeOff"); }
@@ -53,7 +53,8 @@
             case 9:
               selected = selected >= size - 1 ? 0 : selected + 1; break;
             case 38:
-              selected = selected <= 0 ? size - 1 : selected - 1;
+              selected = selected <= 0 ? size - 1 : selected - 1; break;
+            default: break;
           }
           activate();
         }
@@ -71,24 +72,25 @@
       wrapper: "<ul class='jq-ui-autocomplete'></ul>"
     }, opt);
 
-    if($.ui.autocomplete.ext)
+    if($.ui.autocomplete.ext) {
       for(var ext in $.ui.autocomplete.ext) {
-        var opt = $.extend(opt, $.ui.autocomplete.ext[ext](opt));
+        opt = $.extend(opt, $.ui.autocomplete.ext[ext](opt));
         delete opt[ext];
-      }
+    } }
 
     return this.each(function() {
   
       $(this)
         .keypress(function(e) {
+          var charCode = e.charCode || e.charCode === 0 ? e.charCode : e.keyCode;
           var typingTimeout = $.data(this, "typingTimeout");
           if(typingTimeout) window.clearInterval(typingTimeout);
           
           if($.data(document.body, "suppressKey"))
             return $.data(document.body, "suppressKey", false);
-          else if($.data(document.body, "autocompleteMode") && e.which < 32) return;          
+          else if($.data(document.body, "autocompleteMode") && charCode < 32 && e.keyCode != 8 && e.keyCode != 46) return false;          
           else {
-            $.data(this, "typingTimeout", setTimeout(function() { 
+            $.data(this, "typingTimeout", window.setTimeout(function() { 
               $(e.target).trigger("autocomplete"); 
             }, opt.timeout));
           }
@@ -97,7 +99,7 @@
           var self = $(this);
 
           self.one("updateList", function(e, list) {
-            var list = $(list)
+            list = $(list)
               .filter(function() { return opt.match.call(this, self.val()); })
               .map(function() {
                 var node = $(opt.template(this))[0];
