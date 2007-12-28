@@ -16,7 +16,6 @@
   $.ui.autocomplete.ext.ajax = function(opt) {
     var ajax = opt.ajax;
     return { getList: function(input) { 
-      console.log("XHR");
       $.getJSON(ajax, "val=" + input.val(), function(json) { input.trigger("updateList", [json]); }); 
     } };
   };

@@ -8,7 +8,7 @@
 	<meta name="generator" content="TextMate http://macromates.com/">
 	<meta name="author" content="Yehuda Katz">
 	<link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
-  <script src="jquery.min.js"></script>
+  <script src="jquery.js"></script>
   <script src="jquery.dimensions.js"></script>  
   <script src="jquery.ui.autocomplete.ext.js"></script>  
   <script src="jquery.ui.autocomplete.js"></script>
@@ -19,11 +19,11 @@
         template: function(obj) { return "<li>" + obj.text + "</li>"; },
         match: function(typed) { return this.text.match(new RegExp(typed)); },        
       })
-        .bind("itemSelected", function(e, d) { console.log(d); });
+        .bind("itemSelected", function(e, d) { console.log("Hello"); });
     });
   </script>
 </head>
 <body>
-  <input type="text" class="autocomplete" />
+  <input type="text" class="autocomplete" autocomplete="off" />
 </body>
 </html>
