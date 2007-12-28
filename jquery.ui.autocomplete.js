@@ -17,23 +17,22 @@
     var original = input.val();
     var selected = -1;
     var self = this;
-    $.data(this[0], "autocompleteMode", true);
+    $.data(document.body, "autocompleteMode", true);
   
-    var autocompleteModeOff = function() {
+    var autocompleteModeOff = function(reset) {
+      if(reset) input.val(original);
       container.remove();
       $.data(document.body, "autocompleteMode", false);
-      $.data(document.body, "suppressKey", true);    
+      $.data(document.body, "suppressKey", true);
+      input.unbind("blur.autocomplete").unbind("keydown.autocomplete");
     };
     
     input
-      .blur(function() { autocompleteModeOff(); })
-      .keydown(function(e) {
-        if(e.which == 27) { 
-          input.val(original); 
-          autocompleteModeOff();
-        } else if(e.which == 13) { 
-          autocompleteModeOff();
-        } else if(e.which == 40 || e.which == 9 || e.which == 38) {
+      .bind("blur.autocomplete", function() { autocompleteModeOff(true); })
+      .bind("keydown.autocomplete", function(e) {
+        if(e.which == 27) {  autocompleteModeOff(true); }
+        else if(e.which == 13) { autocompleteModeOff(); }
+        else if(e.which == 40 || e.which == 9 || e.which == 38) {
           switch(e.which) {
             case 40: 
             case 9:
@@ -45,7 +44,7 @@
             .slice(selected, selected + 1).addClass("active");
           input.val(active.html());
         }
-        if(e.which == 9) $.data(input[0], "suppressKey", true);
+        if(e.which == 9) $.data(document.body, "suppressKey", true);
       });
   };
   
@@ -66,7 +65,8 @@
           var typingTimeout = $.data(this, "typingTimeout");
           if(typingTimeout) window.clearInterval(typingTimeout);
           
-          if($.data(this, "suppressKey")) { return $.data(this, "suppressKey", false); }
+          if($.data(document.body, "suppressKey"))
+            return $.data(document.body, "suppressKey", false);
           else if($.data(document.body, "autocompleteMode")) return;          
           else {
             $.data(this, "typingTimeout", setTimeout(function() { 
