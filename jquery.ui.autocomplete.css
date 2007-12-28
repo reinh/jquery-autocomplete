@@ -10,5 +10,7 @@ ul.jq-ui-autocomplete {
     color: #333333;
 }
 ul.jq-ui-autocomplete li { display:block; padding: .2em .3em .3em;}
-ul.jq-ui-autocomplete li.selected { background-color: #FFFFBB; }
+
+ul.jq-ui-autocomplete li.selected,
+ul.jq-ui-autocomplete li.hover,
 ul.jq-ui-autocomplete li:hover { background-color: #3875d7; color: #FFFFFF; }
