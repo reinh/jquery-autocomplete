@@ -26,7 +26,7 @@
     };
     
     input
-      .blur(function() { self.autocompleteModeOff(container); })
+      .blur(function() { autocompleteModeOff(); })
       .keydown(function(e) {
         if(e.which == 27) { 
           input.val(original); 
