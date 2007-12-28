@@ -14,8 +14,13 @@
   <script src="jquery.ui.autocomplete.js"></script>
   <script>
     $(function() {
-      $("input.autocomplete").autocomplete({ajax: "list"});
-    })
+      $("input.autocomplete").autocomplete({
+        ajax: "list", 
+        template: function(obj) { return "<li>" + obj.text + "</li>"; },
+        match: function(typed) { return this.text.match(new RegExp(typed)); },        
+      })
+        .bind("itemSelected", function(e, d) { console.log(d); });
+    });
   </script>
 </head>
 <body>

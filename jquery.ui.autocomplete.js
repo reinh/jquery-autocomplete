@@ -42,6 +42,7 @@
           }
           var active = $("> *", container).removeClass("active")
             .slice(selected, selected + 1).addClass("active");
+          input.trigger("itemSelected", [$.data(active[0], "originalObject")]);            
           input.val(active.html());
         }
         if(e.which == 9) $.data(document.body, "suppressKey", true);
@@ -86,13 +87,15 @@
           self.one("updateList", function(e, list) {
             var list = $(list)
               .filter(function() { return opt.match.call(this, self.val()); })
-              .map(function() { return opt.template(this); }).get();
-          
-            console.log(list);
+              .map(function() {
+                var node = $(opt.template(this))[0];
+                $.data(node, "originalObject", this);
+                return node; 
+              });
           
             if(!list.length) { $("body").trigger("autocompleteModeOff", [false, true]); return false; }
           
-            var container = $(list.join("")).wrapAll(opt.wrapper).parents(":last").children();
+            var container = list.wrapAll(opt.wrapper).parents(":last").children();
             
             var offset = self.offset();
             if(opt.container) opt.container.remove();
