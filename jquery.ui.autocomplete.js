@@ -11,27 +11,27 @@
 (function($) {
   
   $.ui = $.ui || {};
-  $.ui.autocomplete = {};
+  $.ui.autocomplete = $.ui.autocomplete || {};
     
   $.fn.autocompleteMode = function(container, input, size) {
     var original = input.val();
     var selected = -1;
     var self = this;
     $.data(document.body, "autocompleteMode", true);
-  
-    var autocompleteModeOff = function(reset) {
+
+    $("body").one("autocompleteModeOff", function(e, reset, dontSuppress) {
       if(reset) input.val(original);
       container.remove();
       $.data(document.body, "autocompleteMode", false);
-      $.data(document.body, "suppressKey", true);
+      if(!dontSuppress) $.data(document.body, "suppressKey", true);
       input.unbind("blur.autocomplete").unbind("keydown.autocomplete");
-    };
+    });
     
     input
       .bind("blur.autocomplete", function() { autocompleteModeOff(true); })
       .bind("keydown.autocomplete", function(e) {
-        if(e.which == 27) {  autocompleteModeOff(true); }
-        else if(e.which == 13) { autocompleteModeOff(); }
+        if(e.which == 27) {  $("body").trigger("autocompleteModeOff", [true]); }
+        else if(e.which == 13) { $("body").trigger("autocompleteModeOff"); }
         else if(e.which == 40 || e.which == 9 || e.which == 38) {
           switch(e.which) {
             case 40: 
@@ -52,12 +52,18 @@
     
     opt = $.extend({}, {
       timeout: 1000,
-      getList: function() { return opt.list; },
+      getList: function(input) { input.trigger("updateList", [opt.list]); },
       template: function(str) { return "<li>" + str + "</li>"; },
       match: function(typed) { return !!this.match(new RegExp(typed)); },
       wrapper: "<ul class='jq-ui-autocomplete'></ul>"
     }, opt);
-  
+
+    if($.ui.autocomplete.ext)
+      for(var ext in $.ui.autocomplete.ext) {
+        var opt = $.extend(opt, $.ui.autocomplete.ext[ext](opt));
+        delete opt[ext];
+      }
+
     return this.each(function() {
   
       $(this)
@@ -67,7 +73,7 @@
           
           if($.data(document.body, "suppressKey"))
             return $.data(document.body, "suppressKey", false);
-          else if($.data(document.body, "autocompleteMode")) return;          
+          else if($.data(document.body, "autocompleteMode") && e.which < 32) return;          
           else {
             $.data(this, "typingTimeout", setTimeout(function() { 
               $(e.target).trigger("autocomplete"); 
@@ -76,24 +82,31 @@
         })
         .bind("autocomplete", function() {
           var self = $(this);
-          var list = $(opt.getList())
-            .filter(function() { return opt.match.call(this, self.val()); })
-            .map(function() { return opt.template(this); }).get();
+
+          self.one("updateList", function(e, list) {
+            var list = $(list)
+              .filter(function() { return opt.match.call(this, self.val()); })
+              .map(function() { return opt.template(this); }).get();
           
-          if(!list.length) return false;
+            console.log(list);
           
-          var container = $(list.join("")).wrapAll(opt.wrapper).parents(":last").children();
+            if(!list.length) { $("body").trigger("autocompleteModeOff", [false, true]); return false; }
+          
+            var container = $(list.join("")).wrapAll(opt.wrapper).parents(":last").children();
             
-          var offset = self.offset();
-          if(opt.container) opt.container.remove();
+            var offset = self.offset();
+            if(opt.container) opt.container.remove();
           
-          opt.container = container.css({
-            top: offset.top + self.outerHeight(),
-            left: offset.left,
-            width: self.width()
-          }).appendTo("body");
+            opt.container = container.css({
+              top: offset.top + self.outerHeight(),
+              left: offset.left,
+              width: self.width()
+            }).appendTo("body");
           
-          $("body").autocompleteMode(container, self, list.length);
+            $("body").autocompleteMode(container, self, list.length);
+          });
+
+          opt.getList(self);
         });
 
     });

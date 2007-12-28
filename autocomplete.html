@@ -10,10 +10,11 @@
 	<link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
   <script src="jquery.min.js"></script>
   <script src="jquery.dimensions.js"></script>  
+  <script src="jquery.ui.autocomplete.ext.js"></script>  
   <script src="jquery.ui.autocomplete.js"></script>
   <script>
     $(function() {
-      $("input.autocomplete").autocomplete({list: ["hello", "goodbye", "hell's yeah"]});
+      $("input.autocomplete").autocomplete({ajax: "list"});
     })
   </script>
 </head>
