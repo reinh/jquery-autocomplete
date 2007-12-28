@@ -13,15 +13,16 @@
   $.ui = $.ui || {};
   $.ui.autocomplete = {};
   
-  $.fn.autocomplete = function(options) {
+  $.fn.autocomplete = function(opt) {
     
-    options = $.extend({}, {
+    opt = $.extend({}, {
       timeout: 1000,
-      getList: function() { return options.list; },
+      getList: function() { return opt.list; },
       template: function(str) { return "<li>" + str + "</li>"; },
       match: function(typed) { return !!this.match(new RegExp(typed)); },
-      wrapper: "<ul></ul>"
-    }, options);
+      wrapper: "<ul></ul>",
+      emptyList: "None"
+    }, opt);
   
     return this.each(function() {
   
@@ -31,14 +32,15 @@
           if(typingTimeout) window.clearInterval(typingTimeout);
           $.data(this, "typingTimeout", setTimeout(function() { 
             $(e.target).trigger("autocomplete"); 
-          }, options.timeout));
+          }, opt.timeout));
         })
         .bind("autocomplete", function() {
           var self = this;
-          var container = $(options.getList())
-            .filter(function() { return options.match.call(this, $(self).val()); })
-            .map(function() { return options.template(this); }).get();
-          console.log(container);
+          var list = $(opt.getList())
+            .filter(function() { return opt.match.call(this, $(self).val()); })
+            .map(function() { return opt.template(this); }).get().join("");
+          var container = $(list || opt.template(opt.emptyList))
+            .wrapAll(opt.wrapper).parents(":last").children();
         });
 
     });
