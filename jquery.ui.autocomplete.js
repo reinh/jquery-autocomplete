@@ -25,10 +25,25 @@
       $.data(document.body, "autocompleteMode", false);
       if(!dontSuppress) $.data(document.body, "suppressKey", true);
       input.unbind("blur.autocomplete").unbind("keydown.autocomplete");
+      $("body").unbind("click.autocomplete");
     });
     
-    input
-      .bind("blur.autocomplete", function() { autocompleteModeOff(true); })
+    $(window).bind("click.autocomplete", function() { $("body").trigger("autocompleteModeOff", [true, true]); });
+        
+    var activate = function() {
+      var active = $("> *", container).removeClass("active")
+        .slice(selected, selected + 1).addClass("active");
+      input.trigger("itemSelected", [$.data(active[0], "originalObject")]);            
+      input.val(active.html());
+    };
+    
+    container.mouseover(function(e) {
+      if(e.target == container[0]) return;
+      selected = $("> *", container).index(e.target);
+      activate();
+    }).click(function(e) { $("body").trigger("autocompleteModeOff", [false, true]); return false; });
+    
+    $("body")
       .bind("keydown.autocomplete", function(e) {
         if(e.which == 27) {  $("body").trigger("autocompleteModeOff", [true]); }
         else if(e.which == 13) { $("body").trigger("autocompleteModeOff"); }
@@ -40,10 +55,7 @@
             case 38:
               selected = selected <= 0 ? size - 1 : selected - 1;
           }
-          var active = $("> *", container).removeClass("active")
-            .slice(selected, selected + 1).addClass("active");
-          input.trigger("itemSelected", [$.data(active[0], "originalObject")]);            
-          input.val(active.html());
+          activate();
         }
         if(e.which == 9) $.data(document.body, "suppressKey", true);
       });
