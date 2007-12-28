@@ -17,10 +17,11 @@
     
     options = $.extend({}, {
       timeout: 1000,
-      list: []
+      getList: function() { return options.list; },
+      template: function(str) { return "<li>" + str + "</li>"; },
+      match: function(typed) { return !!this.match(new RegExp(typed)); },
+      wrapper: "<ul></ul>"
     }, options);
-  
-    console.dir(options);
   
     return this.each(function() {
   
@@ -31,10 +32,13 @@
           $.data(this, "typingTimeout", setTimeout(function() { 
             $(e.target).trigger("autocomplete"); 
           }, options.timeout));
-          console.log($.data(this, "typingTimeout"));
         })
         .bind("autocomplete", function() {
-          console.log("Hello");
+          var self = this;
+          var container = $(options.getList())
+            .filter(function() { return options.match.call(this, $(self).val()); })
+            .map(function() { return options.template(this); }).get();
+          console.log(container);
         });
 
     });
