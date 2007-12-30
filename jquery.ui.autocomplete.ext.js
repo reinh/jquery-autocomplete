@@ -20,4 +20,9 @@
     } };
   };
   
+  $.ui.autocomplete.ext.templateText = function(opt) {
+    var template = $.makeTemplate(opt.templateText, "<%", "%>");
+    return { template: function(obj) { return template(obj); } };
+  };
+  
 })(jQuery);

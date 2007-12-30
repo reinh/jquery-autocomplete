@@ -12,7 +12,7 @@
   
   $.ui = $.ui || {}; $.ui.autocomplete = $.ui.autocomplete || {}; var active;
     
-  $.fn.autocompleteMode = function(container, input, size) {
+  $.fn.autocompleteMode = function(container, input, size, opt) {
     var original = input.val(); var selected = -1; var self = this;
     
     $.data(document.body, "autocompleteMode", true);
@@ -29,7 +29,7 @@
       container.remove();
       $.data(document.body, "autocompleteMode", false);
       input.unbind("keydown.autocomplete");
-      $("body").add(window).unbind("click.autocomplete").unbind("cancel.autocomplete");
+      $("body").add(window).unbind("click.autocomplete").unbind("cancel.autocomplete").unbind("activate.autocomplete");
     });
     
     // If a click bubbles all the way up to the window, close the autocomplete
@@ -38,7 +38,7 @@
     var select = function() {
       active = $("> *", container).removeClass("active").slice(selected, selected + 1).addClass("active");
       input.trigger("itemSelected.autocomplete", [$.data(active[0], "originalObject")]);     
-      input.val(active.html());
+      input.val(opt.insertText($.data(active[0], "originalObject")));
     };
     
     container.mouseover(function(e) {
@@ -74,28 +74,30 @@
     opt = $.extend({}, {
       timeout: 1000,
       getList: function(input) { input.trigger("updateList", [opt.list]); },
-      template: function(str) { return "<li>" + str + "</li>"; },
-      match: function(typed) { return !!this.match(new RegExp(typed)); },
+      template: function(str) { return "<li>" + opt.insertText(str) + "</li>"; },
+      insertText: function(str) { return str; },
+      match: function(typed) { return this.match(new RegExp(typed)); },
       wrapper: "<ul class='jq-ui-autocomplete'></ul>"
     }, opt);
 
     if($.ui.autocomplete.ext) {
       for(var ext in $.ui.autocomplete.ext) {
-        opt = $.extend(opt, $.ui.autocomplete.ext[ext](opt));
-        delete opt[ext];
+        if(opt[ext]) {
+          opt = $.extend(opt, $.ui.autocomplete.ext[ext](opt));
+          delete opt[ext];
+        }
     } }
 
     return this.each(function() {
   
       $(this)
         .keypress(function(e) {
-          var charCode = e.charCode || e.charCode === 0 ? e.charCode : e.keyCode;
           var typingTimeout = $.data(this, "typingTimeout");
           if(typingTimeout) window.clearInterval(typingTimeout);
                     
           if($.data(document.body, "suppressKey"))
             return $.data(document.body, "suppressKey", false);
-          else if($.data(document.body, "autocompleteMode") && charCode < 32 && e.keyCode != 8 && e.keyCode != 46) return false;          
+          else if($.data(document.body, "autocompleteMode") && e.charCode < 32 && e.keyCode != 8 && e.keyCode != 46) return false;          
           else {
             $.data(this, "typingTimeout", window.setTimeout(function() { 
               $(e.target).trigger("autocomplete"); 
@@ -116,19 +118,17 @@
           
             $("body").trigger("off.autocomplete");
           
-            if(!list.length) { return false; }
+            if(!list.length) return false;
           
             var container = list.wrapAll(opt.wrapper).parents(":last").children();
             
             var offset = self.offset();
           
-            opt.container = container.css({
-              top: offset.top + self.outerHeight(),
-              left: offset.left,
-              width: self.width()
-            }).appendTo("body");
+            opt.container = container
+              .css({top: offset.top + self.outerHeight(), left: offset.left, width: self.width()})
+              .appendTo("body");
           
-            $("body").autocompleteMode(container, self, list.length);
+            $("body").autocompleteMode(container, self, list.length, opt);
           });
 
           opt.getList(self);

@@ -10,17 +10,19 @@
 	<link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
   <script src="jquery.js"></script>
   <script src="jquery.dimensions.js"></script>  
-  <script src="jquery.ui.autocomplete.ext.js"></script>  
+  <script src="jquery.templating.js"></script>
+  <script src="jquery.ui.autocomplete.ext.js"></script>
   <script src="jquery.ui.autocomplete.js"></script>
   <script>
     $(function() {
       $("input.autocomplete").autocomplete({
         ajax: "list", 
-        template: function(obj) { return "<li>" + obj.text + "</li>"; },
-        match: function(typed) { return this.text.match(new RegExp(typed)); },        
+        match: function(typed) { return this.text.match(new RegExp(typed)); },
+        insertText: function(obj) { return obj.text },
+        templateText: "<li>Hey: <%= text %></li>"
       })
         .bind("activate.autocomplete", function(e, d) { console.log(d); })
-        .bind("cancel.autocomplete", function(e) { console.log("Cancelled") });
+        .bind("cancel.autocomplete", function(e) { console.log("Cancelled"); });
     });
   </script>
 </head>
