@@ -1,12 +1,26 @@
-/*
- * UI Autocomplete - jQuery plugin 0.0.1
+/* jQuery Autocomplete
+ * Version 1.0
+ * Written by Yehuda Katz (wycats@gmail.com) and Rein Henrichs (reinh@reinh.com)
+ * @requires jQuery v1.2, jQuery dimensions plugin
  *
- * Copyright (c) 2007 Yehuda Katz, Rein Henrichs
- *
+ * Copyright 2007 Yehuda Katz, Rein Henrichs
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
+ *
  */
+
+/*
+ * @description Form autocomplete plugin using preloaded or Ajax JSON data source 
+ *
+ * @example $('input#user-name').autocomplete({list: ["quentin", "adam", "admin"]})
+ * @desc Simple autocomplete with basic JSON data source
+ *
+ * @example $('input#user-name').autocomplete({ajax: "/usernames.js"})
+ * @desc Simple autocomplete with Ajax loaded JSON data source
+ *
+ */
+ 
 
 (function($) {
   
@@ -45,7 +59,7 @@
       // If you hover over the container, but not its children, return
       if(e.target == container[0]) return;
       // Set the selected item to the item hovered over and make it active
-      selected = $("> *", container).index(e.target); select();
+      selected = $("> *", container).index($(e.target).is('li') ? e.target : $(e.target).parents('li')[0]); select();
     }).bind("click.autocomplete", function(e) {
       $("body").trigger("activate.autocomplete"); $.data(document.body, "suppressKey", false); 
     });
