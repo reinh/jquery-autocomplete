@@ -59,7 +59,7 @@
       // If you hover over the container, but not its children, return
       if(e.target == container[0]) return;
       // Set the selected item to the item hovered over and make it active
-      selected = $("> *", container).index($(e.target).is('li') ? e.target : $(e.target).parents('li')[0]); select();
+      selected = $("> *", container).index($(e.target).is('li') ? $(e.target)[0] : $(e.target).parents('li')[0]); select();
     }).bind("click.autocomplete", function(e) {
       $("body").trigger("activate.autocomplete"); $.data(document.body, "suppressKey", false); 
     });
