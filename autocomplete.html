@@ -2,31 +2,80 @@
    "http://www.w3.org/TR/html4/strict.dtd">
 
 <html lang="en">
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>autocomplete</title>
-	<meta name="generator" content="TextMate http://macromates.com/">
-	<meta name="author" content="Yehuda Katz">
-	<link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>autocomplete</title>
+    <meta name="generator" content="TextMate http://macromates.com/">
+    <meta name="author" content="Yehuda Katz">
+    <link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
+    <style type="text/css">
+      .matching {
+      font-weight: bold;
+      text-decoration: underline;
+      }
+    </style>
+
   <script src="jquery.js"></script>
-  <script src="jquery.dimensions.js"></script>  
+  <script src="jquery.dimensions.js"></script>
   <script src="jquery.templating.js"></script>
   <script src="jquery.ui.autocomplete.ext.js"></script>
   <script src="jquery.ui.autocomplete.js"></script>
   <script>
+    console = typeof(console) !== 'undefined' ? console : {};
+    console.log = typeof(console.log) !== 'undefined' ? console.log : function(msg) { $('#log').html(msg + '<br/>\n' + $('#log').html() ); };
+
     $(function() {
-      $("input.autocomplete").autocomplete({
-        ajax: "list", 
+      $("input.autocomplete.0").autocomplete({
+        ajax: "list",
         match: function(typed) { return this.text.match(new RegExp(typed)); },
         insertText: function(obj) { return obj.text },
         templateText: "<li>Hey: <%= text %></li>"
       })
+
+      var list1 = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
+      $("input.autocomplete.1").autocomplete({
+        list: list1,
+        match: function(typed) {
+          this.typed = typed;
+          this.pre_match = this.text;
+          this.match = this.post_match = '';
+          if (!this.ajax && !typed || typed.length == 0) { return true; }
+          var match_at = this.text.search(new RegExp("\\b" + typed, "i"));
+          if (match_at != -1) {
+            this.pre_match = this.text.slice(0,match_at);
+            this.match = this.text.slice(match_at,match_at + typed.length);
+            this.post_match = this.text.slice(match_at + typed.length);
+            return true;
+          }
+          return false;
+        },
+        insertText: function(obj) { return obj.text },
+        templateText: "<li><%= pre_match %><span class='matching' ><%= match %></span><%= post_match %></li>"
+      });
+
+      $("input.autocomplete.2").autocomplete({
+        ajax: "list",
+        match: function(typed) { return this.text.match(new RegExp(typed, "i")); },
+        insertText: function(obj) { return obj.text },
+        templateText: "<li>Hey: <%= text %></li>"
+      })
+
+      $("input.autocomplete")
         .bind("activate.autocomplete", function(e, d) { console.log(d); })
         .bind("cancel.autocomplete", function(e) { console.log("Cancelled"); });
     });
+
+
   </script>
 </head>
 <body>
-  <input type="text" class="autocomplete" autocomplete="off" />
+  <input type="text" class="autocomplete 0" />
+
+  <br />
+  <form onsubmit="return false;">
+    <input type="text" class="autocomplete 1" />
+    <input type="text" class="autocomplete 2" />
+  </form>
+<div id="log"></div>
 </body>
 </html>
