@@ -21,8 +21,7 @@
   <script src="jquery.ui.autocomplete.ext.js"></script>
   <script src="jquery.ui.autocomplete.js"></script>
   <script>
-    console = typeof(console) !== 'undefined' ? console : {};
-    console.log = typeof(console.log) !== 'undefined' ? console.log : function(msg) { $('#log').html(msg + '<br/>\n' + $('#log').html() ); };
+    console = typeof(console) !== 'undefined' ? console : { log: function(msg) { $('#log').html(msg + '<br/>\n' + $('#log').html() ); } };
 
     $(function() {
       $("input.autocomplete.0").autocomplete({
@@ -72,9 +71,10 @@
   <input type="text" class="autocomplete 0" />
 
   <br />
-  <form onsubmit="return false;">
+  <form onsubmit="alert('trying to submit'); return false;">
     <input type="text" class="autocomplete 1" />
     <input type="text" class="autocomplete 2" />
+    <input type="submit" value="stub submit"/>
   </form>
 <div id="log"></div>
 </body>

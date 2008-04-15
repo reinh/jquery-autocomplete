@@ -117,9 +117,34 @@
         }
     } }
 
-    return this.each(function() {
+    function preventTabInAutocompleteMode(e) {
+      var k = e.which || e.keycode;
+      if ($.data(document.body, "autocompleteMode") && k == KEY.TAB) {
+        e.preventDefault();
+      }
+    }
+    function startTypingTimeout(e) {
+      $.data(this, "typingTimeout", window.setTimeout(function() {
+        $(e.target || e.srcElement).trigger("autocomplete");
+      }, opt.timeout));
+    }
 
+    return this.each(function() {
       $(this)
+        .keydown(function(e) {
+          preventTabInAutocompleteMode(e);
+        })
+        .keyup(function(e) {
+          var k = e.which || e.keycode;
+          if (!$.data(document.body, "autocompleteMode") &&
+              (k == KEY.UP || k == KEY.DOWN) &&
+              !$.data(this, "typingTimeout")) {
+            startTypingTimeout(e);
+          }
+          else {
+            preventTabInAutocompleteMode(e);
+          }
+        })
         .keypress(function(e) {
           var typingTimeout = $.data(this, "typingTimeout");
           var k = e.keyCode || e.which; // keyCode == 0 in Gecko/FF on keypress
@@ -128,10 +153,8 @@
           if($.data(document.body, "suppressKey"))
             return $.data(document.body, "suppressKey", false);
           else if($.data(document.body, "autocompleteMode") && k < 32 && k != KEY.BS && k != KEY.DEL) return false;
-          else if (k != KEY.TAB  && k != KEY.ESC) { // don't start the meter running if we are tabbing out or escaping this nuthouse
-            $.data(this, "typingTimeout", window.setTimeout(function() {
-               $(e.target).trigger("autocomplete");
-            }, opt.timeout));
+          else if (k > 32) { // more than ESC and RETURN and the like
+            startTypingTimeout(e);
           }
         })
         .bind("autocomplete", function() {
@@ -151,6 +174,10 @@
             if(!list.length) return false;
 
             var container = list.wrapAll(opt.wrapper).parents(":last").children();
+            // IE seems to wrap the wrapper in a random div wrapper so
+            // drill down to the node in opt.wrapper.
+            var wrapper_tagName = $(opt.wrapper)[0].tagName;
+            for (;container[0].tagName !== wrapper_tagName; container = container.children(':first')) {}
 
             var offset = self.offset();
 
