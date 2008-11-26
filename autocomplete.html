@@ -31,6 +31,9 @@
   <script type="text/javascript">
   //<![CDATA[
     jQuery(function($) {
+      window.console = typeof(window.console) !== 'undefined'
+        ? window.console :
+        { log: function(msg) { $('#log').html(msg + '<br/>\n' + $('#log').html() ); } };
 
       var birds_list = ["Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel"];
       $("input.autocomplete.birds").autocomplete({
