@@ -158,11 +158,12 @@
           }
         })
         .bind("autocomplete", function() {
-          var self = $(this);
+          var self = $(this),
+              val = self.val();
 
           self.one("updateList", function(e, list) {
             list = $(list)
-              .filter(function() { return opt.match.call(this, self.val()); })
+              .filter(function() { return opt.match.call(this, val); })
               .map(function() {
                 var node = $(opt.template(this))[0];
                 $.data(node, "originalObject", this);
