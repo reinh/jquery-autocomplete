@@ -102,6 +102,7 @@
 
     opt = $.extend({}, {
       timeout: 1000,
+      threshold: 100,
       getList: function(input) { input.trigger("updateList", [opt.list]); },
       template: function(str) { return "<li>" + opt.insertText(str) + "</li>"; },
       insertText: function(str) { return str; },
@@ -172,7 +173,7 @@
 
             $("body").trigger("off.autocomplete");
 
-            if(!list.length) return false;
+            if(!list.length || list.length > opt.threshold) return false;
 
             var container = list.wrapAll(opt.wrapper).parents(":last").children();
             // IE seems to wrap the wrapper in a random div wrapper so
