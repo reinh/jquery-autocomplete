@@ -123,8 +123,8 @@
         e.preventDefault();
       }
     }
-    function startTypingTimeout(e) {
-      $.data(this, "typingTimeout", window.setTimeout(function() {
+    function startTypingTimeout(e, element) {
+      $.data(element, "typingTimeout", window.setTimeout(function() {
         $(e.target || e.srcElement).trigger("autocomplete");
       }, opt.timeout));
     }
@@ -139,7 +139,7 @@
           if (!$.data(document.body, "autocompleteMode") &&
               (k == KEY.UP || k == KEY.DOWN) &&
               !$.data(this, "typingTimeout")) {
-            startTypingTimeout(e);
+            startTypingTimeout(e, this);
           }
           else {
             preventTabInAutocompleteMode(e);
@@ -154,7 +154,7 @@
             return $.data(document.body, "suppressKey", false);
           else if($.data(document.body, "autocompleteMode") && k < 32 && k != KEY.BS && k != KEY.DEL) return false;
           else if (k > 32) { // more than ESC and RETURN and the like
-            startTypingTimeout(e);
+            startTypingTimeout(e, this);
           }
         })
         .bind("autocomplete", function() {
