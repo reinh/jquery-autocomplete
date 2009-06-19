@@ -19,7 +19,7 @@
     var ajax = opt.ajax;
     return { getList: function(input) { 
 			if (input.val().match(/^\s*$/)) return false;
-      $.getJSON(ajax, "val=" + input.val(), function(json) { input.trigger("updateList", [json]); }); 
+      $.getJSON(ajax, { val: input.val() }, function(json) { input.trigger("updateList", [json]); });
     } };
   };
   
