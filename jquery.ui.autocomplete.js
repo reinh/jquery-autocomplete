@@ -1,6 +1,7 @@
 /* jQuery Autocomplete
  * Version 1.0
  * Written by Yehuda Katz (wycats@gmail.com) and Rein Henrichs (reinh@reinh.com)
+ * Forked and maintained by Nikos Dimitrakopoulos (os@nikosd.com)
  * @requires jQuery v1.2, jQuery dimensions plugin
  *
  * Copyright 2007 Yehuda Katz, Rein Henrichs
