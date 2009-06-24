@@ -102,6 +102,7 @@
 
     opt = $.extend({}, {
       timeout: 1000,
+      threshold: 100,
       getList: function(input) { input.trigger("updateList", [opt.list]); },
       template: function(str) { return "<li>" + opt.insertText(str) + "</li>"; },
       insertText: function(str) { return str; },
@@ -123,8 +124,8 @@
         e.preventDefault();
       }
     }
-    function startTypingTimeout(e) {
-      $.data(this, "typingTimeout", window.setTimeout(function() {
+    function startTypingTimeout(e, element) {
+      $.data(element, "typingTimeout", window.setTimeout(function() {
         $(e.target || e.srcElement).trigger("autocomplete");
       }, opt.timeout));
     }
@@ -139,7 +140,7 @@
           if (!$.data(document.body, "autocompleteMode") &&
               (k == KEY.UP || k == KEY.DOWN) &&
               !$.data(this, "typingTimeout")) {
-            startTypingTimeout(e);
+            startTypingTimeout(e, this);
           }
           else {
             preventTabInAutocompleteMode(e);
@@ -154,15 +155,16 @@
             return $.data(document.body, "suppressKey", false);
           else if($.data(document.body, "autocompleteMode") && k < 32 && k != KEY.BS && k != KEY.DEL) return false;
           else if (k > 32) { // more than ESC and RETURN and the like
-            startTypingTimeout(e);
+            startTypingTimeout(e, this);
           }
         })
         .bind("autocomplete", function() {
-          var self = $(this);
+          var self = $(this),
+              val = self.val();
 
           self.one("updateList", function(e, list) {
             list = $(list)
-              .filter(function() { return opt.match.call(this, self.val()); })
+              .filter(function() { return opt.match.call(this, val); })
               .map(function() {
                 var node = $(opt.template(this))[0];
                 $.data(node, "originalObject", this);
@@ -171,7 +173,7 @@
 
             $("body").trigger("off.autocomplete");
 
-            if(!list.length) return false;
+            if(!list.length || list.length > opt.threshold) return false;
 
             var container = list.wrapAll(opt.wrapper).parents(":last").children();
             // IE seems to wrap the wrapper in a random div wrapper so
