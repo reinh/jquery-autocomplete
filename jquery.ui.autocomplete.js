@@ -37,12 +37,16 @@
   };
 
   $.fn.autocompleteMode = function(container, input, size, opt) {
-    var original = input.val(); var selected = -1; var self = this;
+    var original = input.val();
+    var selected = -1;
+    var self = this;
 
     $.data(document.body, "autocompleteMode", true);
 
     $("body").one("cancel.autocomplete", function() {
-      input.trigger("cancel.autocomplete"); $("body").trigger("off.autocomplete"); input.val(original);
+      input.trigger("cancel.autocomplete");
+      $("body").trigger("off.autocomplete");
+      input.val(original);
     });
 
     $("body").one("activate.autocomplete", function() {
@@ -156,8 +160,7 @@
           var k = e.keyCode || e.which; // keyCode == 0 in Gecko/FF on keypress
           if(typingTimeout) window.clearInterval(typingTimeout);
 
-          if($.data(document.body, "suppressKey"))
-            return $.data(document.body, "suppressKey", false);
+          if($.data(document.body, "suppressKey")) return $.data(document.body, "suppressKey", false);
           else if($.data(document.body, "autocompleteMode") && k < 32 && k != KEY.BS && k != KEY.DEL) return false;
           else if (k == KEY.BS || k == KEY.DEL || k > 32) { // more than ESC and RETURN and the like
             startTypingTimeout(e, this);
