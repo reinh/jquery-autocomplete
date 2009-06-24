@@ -153,7 +153,7 @@
           if($.data(document.body, "suppressKey"))
             return $.data(document.body, "suppressKey", false);
           else if($.data(document.body, "autocompleteMode") && k < 32 && k != KEY.BS && k != KEY.DEL) return false;
-          else if (k > 32) { // more than ESC and RETURN and the like
+          else if (k == KEY.BS || k == KEY.DEL || k > 32) { // more than ESC and RETURN and the like
             startTypingTimeout(e, this);
           }
         })
