@@ -68,14 +68,19 @@
       input.val(opt.insertText($.data(active[0], "originalObject")));
     };
 
-    container.mouseover(function(e) {
-      // If you hover over the container, but not its children, return
-      if(e.target == container[0]) return;
-      // Set the selected item to the item hovered over and make it active
-      selected = $("> *", container).index($(e.target).is('li') ? $(e.target)[0] : $(e.target).parents('li')[0]); select();
-    }).bind("click.autocomplete", function(e) {
-      $("body").trigger("activate.autocomplete"); $.data(document.body, "suppressKey", false);
-    });
+    container
+      .mouseover(function(e) {
+        // If you hover over the container, but not its children, return
+        if(e.target == container[0]) return;
+        
+        // Set the selected item to the item hovered over and make it active
+        selected = $("> *", container).index($(e.target).is('li') ? $(e.target)[0] : $(e.target).parents('li')[0]);
+        select();
+      })
+      .bind("click.autocomplete", function(e) {
+        $("body").trigger("activate.autocomplete");
+        $.data(document.body, "suppressKey", false);
+      });
 
     input
       .bind("keydown.autocomplete", function(e) {
@@ -123,6 +128,7 @@
         e.preventDefault();
       }
     }
+    
     function startTypingTimeout(e, element) {
       $.data(element, "typingTimeout", window.setTimeout(function() {
         $(e.target || e.srcElement).trigger("autocomplete");
@@ -191,7 +197,6 @@
 
           opt.getList(self);
         });
-
     });
   };
 
