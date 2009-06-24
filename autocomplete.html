@@ -33,6 +33,7 @@
       var list1 = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
       $("input.autocomplete.1").autocomplete({
         list: list1,
+        timeout: 0,
         match: function(typed) {
           this.typed = typed;
           this.pre_match = this.text;
