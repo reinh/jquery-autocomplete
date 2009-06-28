@@ -81,7 +81,13 @@
         var k = e.which || e.keyCode; // in IE e.which is undefined
 
         if(k == KEY.ESC) { $("body").trigger("cancel.autocomplete"); }
-        else if(k == KEY.RETURN || k == KEY.TAB) { $("body").trigger("activate.autocomplete"); }
+        else if(k == KEY.RETURN || k == KEY.TAB) {
+          if (selected == -1){
+            selected = selected >= size - 1 ? 0 : selected + 1;
+            select();
+          }
+          $("body").trigger("activate.autocomplete");
+        }
         else if(k == KEY.UP || k == KEY.DOWN) {
           switch(k) {
             case KEY.DOWN:
