@@ -7,6 +7,7 @@
     <title>autocomplete</title>
     <meta name="generator" content="TextMate http://macromates.com/">
     <meta name="author" content="Yehuda Katz">
+    <meta name="author" content="Nikos Dimitrakopoulos">
     <link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
     <style type="text/css">
       .matching {
@@ -23,16 +24,10 @@
   <script>
 
     $(function() {
-      $("input.autocomplete.0").autocomplete({
-        ajax: "list",
-        match: function(typed) { return this.text.match(new RegExp(typed)); },
-        insertText: function(obj) { return obj.text },
-        templateText: "<li>Hey: <%= text %></li>"
-      })
 
-      var list1 = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
+      var static_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
       $("input.autocomplete.1").autocomplete({
-        list: list1,
+        list: static_list,
         timeout: 0,
         match: function(typed) {
           this.typed = typed;
@@ -68,12 +63,23 @@
   </script>
 </head>
 <body>
-  <input type="text" class="autocomplete 0" />
-
-  <br />
   <form onsubmit="alert('trying to submit'); return false;">
-    <input type="text" class="autocomplete 1" />
-    <input type="text" class="autocomplete 2" />
+    <label for="autocomplete-1">
+      Local list ("Curious George", "George of the Jungle", "Felix the Cat") :
+    </label>
+    <br />
+    <input id="autocomplete-1" name="autocomplete-1" type="text" class="autocomplete 1" />
+    <br />
+
+    <br />
+    <label for="autocomplete-2">
+      Ajax ("Hello", "w00t", "goodbye", "w00tness" ) :
+    </label>
+    <br />
+    <input id="autocomplete-2" name="autocomplete-2" type="text" class="autocomplete 2" />
+    <br />
+
+    <br />
     <input type="submit" value="stub submit"/>
   </form>
 <div id="log"></div>
