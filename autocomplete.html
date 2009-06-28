@@ -4,15 +4,20 @@
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>autocomplete</title>
+    <title>jQuery Autocomplete plugin demo</title>
     <meta name="generator" content="TextMate http://macromates.com/">
     <meta name="author" content="Yehuda Katz">
     <meta name="author" content="Nikos Dimitrakopoulos">
     <link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="prettify/prettify.css" type="text/css" media="screen" />
     <style type="text/css">
       .matching {
-      font-weight: bold;
-      text-decoration: underline;
+        font-weight: bold;
+        text-decoration: underline;
+      }
+      .included-options{
+        color: #aaa;
+        font-size: 12px;
       }
     </style>
 
@@ -21,13 +26,28 @@
   <script src="jquery.templating.js"></script>
   <script src="jquery.ui.autocomplete.ext.js"></script>
   <script src="jquery.ui.autocomplete.js"></script>
+  <script src="prettify/prettify.js"></script>
   <script>
 
     $(function() {
 
-      var static_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
-      $("input.autocomplete.1").autocomplete({
-        list: static_list,
+      var birds_list = ["Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel"];
+      $("input.autocomplete.birds").autocomplete({
+        list: birds_list
+      })
+
+      $("input.autocomplete.big-cats").autocomplete({
+        ajax: "list",
+        timeout: 500,
+        threshold: 2,
+        match: function(typed) { return this.text.match(new RegExp(typed, "i")); },
+        insertText: function(obj) { return obj.text },
+        templateText: "<li>Available cats: <%= text %></li>"
+      })
+
+      var weird_names_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
+      $("input.autocomplete.weird-names").autocomplete({
+        list: weird_names_list,
         timeout: 0,
         match: function(typed) {
           this.typed = typed;
@@ -47,41 +67,140 @@
         templateText: "<li><%= pre_match %><span class='matching' ><%= match %></span><%= post_match %></li>"
       });
 
-      $("input.autocomplete.2").autocomplete({
-        ajax: "list",
-        match: function(typed) { return this.text.match(new RegExp(typed, "i")); },
-        insertText: function(obj) { return obj.text },
-        templateText: "<li>Hey: <%= text %></li>"
-      })
-
       $("input.autocomplete")
         .bind("activate.autocomplete", function(e, d) { console.log(d); })
-        .bind("cancel.autocomplete", function(e) { console.log("Cancelled"); });
+        .bind("cancel.autocomplete", function(e) { console.log("Cancelled"); })
+        .attr("autocomplete","off");
+        
+     prettyPrint();
     });
-
-
   </script>
 </head>
 <body>
-  <form onsubmit="alert('trying to submit'); return false;">
-    <label for="autocomplete-1">
-      Local list ("Curious George", "George of the Jungle", "Felix the Cat") :
-    </label>
-    <br />
-    <input id="autocomplete-1" name="autocomplete-1" type="text" class="autocomplete 1" />
-    <br />
+  <h1>jQuery Autocomplete plugin</h1>
+  
+  <h2>Info</h2>
+  <p>
+    jQuery Autocomplete, Version 1.0<br/>
+    Written by <a href="http://yehudakatz.com/">Yehuda Katz</a> and <a href="http://reinh.com/">Rein Henrichs</a>.<br/>
+    Forked and maintained by <a href="http://blog.nikosd.com">Nikos Dimitrakopoulos</a>.
+  </p>
+  <p>
+    Copyright 2007-2009 Yehuda Katz, Rein Henrichs<br/><br/>
+    Dual licensed under the MIT and GPL licenses:<br/>
+    <ul>
+      <li>http://www.opensource.org/licenses/mit-license.php</li>
+      <li>http://www.gnu.org/licenses/gpl.html</li>
+     </ul>
+  </p>
+   
+  <h2>Requirements &amp; installation</h2>
+  <p>Requires jQuery v1.2 &amp; jQuery dimensions plugin.</p>
+  
+  <h2>Examples</h2>
+    <h3>A really simple example</h3>
+    <p> A really simple example using a local array and the dafault options.</p>
+    <form onsubmit="alert('Supposed to submit now...'); return false;">
+      <label for="bird-name">
+        Local list <span class="included-options">("Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel")</span> :
+      </label>
+      <br />
+      <input id="bird-name" name="bird-name" type="text" class="autocomplete birds" />
+      <br />
+      
+      <br />
+      <input type="submit" value="Submit"/>
+    </form>
+    <p>The source code :</p>
+    <pre class="prettyprint"><code>
+var birds_list = ["Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel"];
+$("input.autocomplete.birds").autocomplete({
+  list: birds_list
+})
+      </code></pre>
 
-    <br />
-    <label for="autocomplete-2">
-      Ajax ("Hello", "w00t", "goodbye", "w00tness" ) :
-    </label>
-    <br />
-    <input id="autocomplete-2" name="autocomplete-2" type="text" class="autocomplete 2" />
-    <br />
+    <h3>More advanced remote JSON example</h3>
+    <p>Basic tweaking and getting the results from a remote web service
+    <ul>
+      <li>Changing the default list elements type by passing the .text object to matcher and 'insertText' / 'templateText'.</li>
+      <li>Overriding the default "match" function with a case-insensitive version</li>
+      <li>Using a custom template for the results box (through the "templateText")</li>
+    </ul>
+    </p>
+    <form onsubmit="alert('Supposed to submit now...'); return false;">
+      <label for="big-cat-name">
+        Ajax <span class="included-options">("Lion", "Tiger", "Jaguar", "Leopard", "Snow Leopard" )</span> :
+      </label>
+      <br />
+      <input id="big-cat-name" name="big-cat-name" type="text" class="autocomplete big-cats" />
+      <br />
 
-    <br />
-    <input type="submit" value="stub submit"/>
-  </form>
+      <br />
+      <input type="submit" value="Submit"/>
+    </form>
+    <p>The source code :</p>
+    <pre class="prettyprint"><code>
+$("input.autocomplete.big-cats").autocomplete({
+  ajax: "list",
+  timeout: 500,
+  threshold: 2,
+  match: function(typed) { return this.text.match(new RegExp(typed, "i")); },
+  insertText: function(obj) { return obj.text },
+  templateText: "&lt;li&gt;Available cats: <%= text %>&lt;/li&gt;"
+})
+      </code></pre>
+    
+    <h3>A more advanced example</h3>
+    <p>
+      Tweaking the inner working of the plugin (as above) but with more powerfull options
+      (notice the "match" and the "templateText" options).
+      <br/>
+      The possibilities are endless...
+    </p>
+    <form onsubmit="alert('Supposed to submit now...'); return false;">
+      <label for="weird-name">
+        Local list <span class="included-options">("Curious George", "George of the Jungle", "Felix the Cat")</span> :
+      </label>
+      <br />
+      <input id="weird-name" name="weird-name" type="text" class="autocomplete weird-names" />
+      <br />
+      
+      <br />
+      <input type="submit" value="Submit"/>
+    </form>
+    <p>The source code :</p>
+    <pre class="prettyprint"><code>
+var weird_names_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
+$("input.autocomplete.weird-names").autocomplete({
+  list: weird_names_list,
+  timeout: 0,
+  match: function(typed) {
+    this.typed = typed;
+    this.pre_match = this.text;
+    this.match = this.post_match = '';
+    if (!this.ajax &amp;&amp; !typed || typed.length == 0) { return true; }
+    var match_at = this.text.search(new RegExp("\\b" + typed, "i"));
+    if (match_at != -1) {
+      this.pre_match = this.text.slice(0,match_at);
+      this.match = this.text.slice(match_at,match_at + typed.length);
+      this.post_match = this.text.slice(match_at + typed.length);
+      return true;
+    }
+    return false;
+  },
+  insertText: function(obj) { return obj.text },
+  templateText: "&lt;li&gt;<%= pre_match %>&lt;span class='matching' &gt;<%= match %>&lt;/span&gt;<%= post_match %>&lt;/li&gt;"
+});
+      </code></pre>
+
+  
+  <h2>Source &amp; downloads</h2>
+  <p>
+    Get the source from <a href="http://github.com/nikosd/jquery-autocomplete">github</a> for usage or forking.
+  </p>
+  <p>
+    The url of the originally forked repo is <a href="http://github.com/ReinH/jquery-autocomplete/tree/master">http://github.com/ReinH/jquery-autocomplete/tree/master</a>.
+  </p>
 <div id="log"></div>
 </body>
 </html>

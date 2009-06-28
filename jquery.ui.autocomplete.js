@@ -4,28 +4,17 @@
  * Forked and maintained by Nikos Dimitrakopoulos (os@nikosd.com)
  * @requires jQuery v1.2, jQuery dimensions plugin
  *
- * Copyright 2007 Yehuda Katz, Rein Henrichs
+ * Copyright 2007-2009 Yehuda Katz, Rein Henrichs, Nikos Dimitrakopoulos
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
  */
-
-/*
- * @description Form autocomplete plugin using preloaded or Ajax JSON data source
- *
- * @example $('input#user-name').autocomplete({list: ["quentin", "adam", "admin"]})
- * @desc Simple autocomplete with basic JSON data source
- *
- * @example $('input#user-name').autocomplete({ajax: "/usernames.js"})
- * @desc Simple autocomplete with Ajax loaded JSON data source
- *
- */
-
-
 (function($) {
 
-  $.ui = $.ui || {}; $.ui.autocomplete = $.ui.autocomplete || {}; var active;
+  $.ui = $.ui || {};
+  $.ui.autocomplete = $.ui.autocomplete || {};
+  var active;
 
   var KEY = {
     ESC: 27,
@@ -99,7 +88,8 @@
               selected = selected >= size - 1 ? 0 : selected + 1; break;
             case KEY.UP:
               selected = selected <= 0 ? size - 1 : selected - 1; break;
-            default: break;
+            default: 
+              break;
           }
           select();
         } else { return true; }
@@ -107,10 +97,21 @@
       });
   };
 
+  /*
+   * @description Form autocomplete plugin using preloaded or Ajax JSON data source
+   *
+   * @example $('input#user-name').autocomplete({list: ["quentin", "adam", "admin"]})
+   * @desc Simple autocomplete with basic JSON data source
+   *
+   * @example $('input#user-name').autocomplete({ajax: "/usernames.js"})
+   * @desc Simple autocomplete with Ajax loaded JSON data source
+   *
+   */
   $.fn.autocomplete = function(opt) {
 
+    /* Default options */
     opt = $.extend({}, {
-      timeout: 1000,
+      timeout: 500,
       threshold: 100,
       getList: function(input) { input.trigger("updateList", [opt.list]); },
       template: function(str) { return "<li>" + opt.insertText(str) + "</li>"; },
@@ -119,6 +120,10 @@
       wrapper: "<ul class='jq-ui-autocomplete'></ul>"
     }, opt);
 
+    /* 
+     * Additional options from autocomplete.ext (for example 'ajax', and 'templateText') 
+     * if these options where passed in the opt object and the $.ui.autocomplete.ext is present.
+    */
     if($.ui.autocomplete.ext) {
       for(var ext in $.ui.autocomplete.ext) {
         if(opt[ext]) {
