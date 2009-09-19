@@ -1,49 +1,50 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>jQuery Autocomplete plugin demo</title>
-    <meta name="generator" content="TextMate http://macromates.com/">
-    <meta name="author" content="Yehuda Katz">
-    <meta name="author" content="Nikos Dimitrakopoulos">
-    <link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="prettify/prettify.css" type="text/css" media="screen" />
-    <style type="text/css">
-      .matching {
-        font-weight: bold;
-        text-decoration: underline;
-      }
-      .included-options{
-        color: #aaa;
-        font-size: 12px;
-      }
-    </style>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>jQuery Autocomplete plugin demo</title>
+  <meta name="generator" content="TextMate http://macromates.com/" />
+  <meta name="author" content="Yehuda Katz" />
+  <meta name="author" content="Nikos Dimitrakopoulos" />
+  <link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="prettify/prettify.css" type="text/css" media="screen" />
+  <style type="text/css">
+    .matching {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    .included-options{
+      color: #aaa;
+      font-size: 12px;
+    }
+  </style>
 
-  <script src="jquery.js"></script>
-  <script src="jquery.dimensions.js"></script>
-  <script src="jquery.templating.js"></script>
-  <script src="jquery.ui.autocomplete.ext.js"></script>
-  <script src="jquery.ui.autocomplete.js"></script>
-  <script src="prettify/prettify.js"></script>
-  <script>
-
-    $(function() {
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <!-- <script type="text/javascript" src="jquery.dimensions.js"></script> -->
+  <script type="text/javascript" src="jquery.templating.js"></script>
+  <script type="text/javascript" src="jquery.ui.autocomplete.ext.js"></script>
+  <script type="text/javascript" src="jquery.ui.autocomplete.js"></script>
+  <script type="text/javascript" src="prettify/prettify.js"></script>
+  <script type="text/javascript">
+  //<![CDATA[
+    jQuery(function($) {
 
       var birds_list = ["Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel"];
       $("input.autocomplete.birds").autocomplete({
-        list: birds_list
-      })
+        list: birds_list,
+        timeout: 100
+      });
 
       $("input.autocomplete.big-cats").autocomplete({
         ajax: "list",
         timeout: 500,
         threshold: 2,
         match: function(typed) { return this.text.match(new RegExp(typed, "i")); },
-        insertText: function(obj) { return obj.text },
+        insertText: function(obj) { return obj.text; },
         templateText: "<li>Available cats: <%= text %></li>"
-      })
+      });
 
       var weird_names_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
       $("input.autocomplete.weird-names").autocomplete({
@@ -63,7 +64,7 @@
           }
           return false;
         },
-        insertText: function(obj) { return obj.text },
+        insertText: function(obj) { return obj.text; },
         templateText: "<li><%= pre_match %><span class='matching' ><%= match %></span><%= post_match %></li>"
       });
 
@@ -72,8 +73,9 @@
         .bind("cancel.autocomplete", function(e) { console.log("Cancelled"); })
         .attr("autocomplete","off");
         
-     prettyPrint();
+      prettyPrint();
     });
+  //]]>
   </script>
 </head>
 <body>
@@ -88,11 +90,11 @@
   <p>
     Copyright 2007-2009 Yehuda Katz, Rein Henrichs<br/><br/>
     Dual licensed under the MIT and GPL licenses:<br/>
-    <ul>
-      <li>http://www.opensource.org/licenses/mit-license.php</li>
-      <li>http://www.gnu.org/licenses/gpl.html</li>
-     </ul>
   </p>
+  <ul>
+    <li>http://www.opensource.org/licenses/mit-license.php</li>
+    <li>http://www.gnu.org/licenses/gpl.html</li>
+   </ul>
    
   <h2>Requirements &amp; installation</h2>
   <p>Requires jQuery v1.2 &amp; jQuery dimensions plugin.</p>
@@ -100,16 +102,18 @@
   <h2>Examples</h2>
     <h3>A really simple example</h3>
     <p> A really simple example using a local array and the dafault options.</p>
-    <form onsubmit="alert('Supposed to submit now...'); return false;">
-      <label for="bird-name">
-        Local list <span class="included-options">("Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel")</span> :
-      </label>
-      <br />
-      <input id="bird-name" name="bird-name" type="text" class="autocomplete birds" />
-      <br />
-      
-      <br />
-      <input type="submit" value="Submit"/>
+    <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
+      <p>
+        <label for="bird-name">
+          Local list <span class="included-options">("Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel")</span> :
+        </label>
+        <br />
+        <input id="bird-name" name="bird-name" type="text" class="autocomplete birds" />
+        <br />
+
+        <br />
+        <input type="submit" value="Submit"/>
+      </p>
     </form>
     <p>The source code :</p>
     <pre class="prettyprint"><code>
@@ -120,23 +124,24 @@ $("input.autocomplete.birds").autocomplete({
       </code></pre>
 
     <h3>More advanced remote JSON example</h3>
-    <p>Basic tweaking and getting the results from a remote web service
+    <p>Basic tweaking and getting the results from a remote web service</p>
     <ul>
       <li>Changing the default list elements type by passing the .text object to matcher and 'insertText' / 'templateText'.</li>
       <li>Overriding the default "match" function with a case-insensitive version</li>
       <li>Using a custom template for the results box (through the "templateText")</li>
     </ul>
-    </p>
-    <form onsubmit="alert('Supposed to submit now...'); return false;">
-      <label for="big-cat-name">
-        Ajax <span class="included-options">("Lion", "Tiger", "Jaguar", "Leopard", "Snow Leopard" )</span> :
-      </label>
-      <br />
-      <input id="big-cat-name" name="big-cat-name" type="text" class="autocomplete big-cats" />
-      <br />
-
-      <br />
-      <input type="submit" value="Submit"/>
+    <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
+      <p>
+        <label for="big-cat-name">
+          Ajax <span class="included-options">("Lion", "Tiger", "Jaguar", "Leopard", "Snow Leopard" )</span> :
+        </label>
+      </p>
+      <p>
+        <input id="big-cat-name" name="big-cat-name" type="text" class="autocomplete big-cats" />
+      </p>
+      <p>
+        <input type="submit" value="Submit"/>
+      </p>
     </form>
     <p>The source code :</p>
     <pre class="prettyprint"><code>
@@ -152,21 +157,23 @@ $("input.autocomplete.big-cats").autocomplete({
     
     <h3>A more advanced example</h3>
     <p>
-      Tweaking the inner working of the plugin (as above) but with more powerfull options
+      Tweaking the inner working of the plugin (as above) but with more powerful options
       (notice the "match" and the "templateText" options).
       <br/>
       The possibilities are endless...
     </p>
-    <form onsubmit="alert('Supposed to submit now...'); return false;">
-      <label for="weird-name">
-        Local list <span class="included-options">("Curious George", "George of the Jungle", "Felix the Cat")</span> :
-      </label>
-      <br />
-      <input id="weird-name" name="weird-name" type="text" class="autocomplete weird-names" />
-      <br />
-      
-      <br />
-      <input type="submit" value="Submit"/>
+    <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
+      <p>
+        <label for="weird-name">
+          Local list <span class="included-options">("Curious George", "George of the Jungle", "Felix the Cat")</span> :
+        </label>
+      </p>
+      <p>
+        <input id="weird-name" name="weird-name" type="text" class="autocomplete weird-names" />
+      </p>
+      <p>
+        <input type="submit" value="Submit"/>
+      </p>
     </form>
     <p>The source code :</p>
     <pre class="prettyprint"><code>
