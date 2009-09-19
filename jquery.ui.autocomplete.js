@@ -9,6 +9,14 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
+ * @description Form autocomplete plugin using preloaded or Ajax JSON data source
+ *
+ * @example $('input#user-name').autocomplete({list: ["quentin", "adam", "admin"]})
+ * @desc Simple autocomplete with basic JSON data source
+ *
+ * @example $('input#user-name').autocomplete({ajax: "/usernames.js"})
+ * @desc Simple autocomplete with Ajax loaded JSON data source
+ *
  */
 (function($) {
 
@@ -26,93 +34,6 @@
     DOWN: 40
   };
 
-  $.fn.autocompleteMode = function(container, input, size, opt) {
-    var original = input.val();
-    var selected = -1;
-    var self = this;
-
-    $.data(document.body, "autocompleteMode", true);
-
-    $("body").one("cancel.autocomplete", function() {
-      input.trigger("cancel.autocomplete");
-      $("body").trigger("off.autocomplete");
-      input.val(original);
-    });
-
-    $("body").one("activate.autocomplete", function() {
-      // Try hitting return to activate autocomplete and then hitting it again on blank input
-      // to close it.  w/o checking the active object first this input.trigger() will barf.
-      active && input.trigger("activate.autocomplete", [$.data(active[0], "originalObject")]);
-      $("body").trigger("off.autocomplete");
-    });
-
-    $("body").one("off.autocomplete", function(e, reset) {
-      container.remove();
-      $.data(document.body, "autocompleteMode", false);
-      input.unbind("keydown.autocomplete");
-      $("body").add(window).unbind("click.autocomplete").unbind("cancel.autocomplete").unbind("activate.autocomplete");
-    });
-
-    // If a click bubbles all the way up to the window, close the autocomplete
-    $(window).bind("click.autocomplete", function() { $("body").trigger("cancel.autocomplete"); });
-
-    var select = function() {
-      active = $("> *", container).removeClass("active").slice(selected, selected + 1).addClass("active");
-      input.trigger("itemSelected.autocomplete", [$.data(active[0], "originalObject")]);
-      input.val(opt.insertText($.data(active[0], "originalObject")));
-    };
-
-    container
-      .mouseover(function(e) {
-        // If you hover over the container, but not its children, return
-        if(e.target == container[0]) return;
-        
-        // Set the selected item to the item hovered over and make it active
-        selected = $("> *", container).index($(e.target).is('li') ? $(e.target)[0] : $(e.target).parents('li')[0]);
-        select();
-      })
-      .bind("click.autocomplete", function(e) {
-        $("body").trigger("activate.autocomplete");
-        $.data(document.body, "suppressKey", false);
-      });
-
-    input
-      .bind("keydown.autocomplete", function(e) {
-        var k = e.which || e.keyCode; // in IE e.which is undefined
-
-        if(k == KEY.ESC) { $("body").trigger("cancel.autocomplete"); }
-        else if(k == KEY.RETURN || k == KEY.TAB) {
-          if (selected == -1){
-            selected = selected >= size - 1 ? 0 : selected + 1;
-            select();
-          }
-          $("body").trigger("activate.autocomplete");
-        }
-        else if(k == KEY.UP || k == KEY.DOWN) {
-          switch(k) {
-            case KEY.DOWN:
-              selected = selected >= size - 1 ? 0 : selected + 1; break;
-            case KEY.UP:
-              selected = selected <= 0 ? size - 1 : selected - 1; break;
-            default: 
-              break;
-          }
-          select();
-        } else { return true; }
-        $.data(document.body, "suppressKey", true);
-      });
-  };
-
-  /*
-   * @description Form autocomplete plugin using preloaded or Ajax JSON data source
-   *
-   * @example $('input#user-name').autocomplete({list: ["quentin", "adam", "admin"]})
-   * @desc Simple autocomplete with basic JSON data source
-   *
-   * @example $('input#user-name').autocomplete({ajax: "/usernames.js"})
-   * @desc Simple autocomplete with Ajax loaded JSON data source
-   *
-   */
   $.fn.autocomplete = function(opt) {
 
     /* Default options */
@@ -213,6 +134,88 @@
           opt.getList(self);
         });
     });
+  };
+
+  $.fn.autocompleteMode = function(container, input, size, opt) {
+    var original = input.val();
+    var selected = -1;
+    var self = this;
+
+    $.data(document.body, "autocompleteMode", true);
+
+    $("body").one("cancel.autocomplete", function() {
+      input.trigger("cancel.autocomplete");
+      $("body").trigger("off.autocomplete");
+      input.val(original);
+    });
+
+    $("body").one("activate.autocomplete", function() {
+      // Try hitting return to activate autocomplete and then hitting it again on blank input
+      // to close it.  w/o checking the active object first this input.trigger() will barf.
+      active && input.trigger("activate.autocomplete", [$.data(active[0], "originalObject")]);
+      $("body").trigger("off.autocomplete");
+    });
+
+    $("body").one("off.autocomplete", function(e, reset) {
+      opt.dismissList(container);
+      $.data(document.body, "autocompleteMode", false);
+      input.unbind("keydown.autocomplete");
+      $("body").add(window).unbind("click.autocomplete").unbind("cancel.autocomplete").unbind("activate.autocomplete");
+    });
+
+    // If a click bubbles all the way up to the window, close the autocomplete
+    $(window).bind("click.autocomplete", function() { $("body").trigger("cancel.autocomplete"); });
+
+    var select = function() {
+      active = $("> *", container).removeClass("active").slice(selected, selected + 1).addClass("active");
+      input.trigger("itemSelected.autocomplete", [$.data(active[0], "originalObject")]);
+      input.val(opt.insertText($.data(active[0], "originalObject")));
+    };
+
+    container
+      .mouseover(function(e) {
+        // If you hover over the container, but not its children, return
+        if(e.target == container[0]) return;
+        
+        // Set the selected item to the item hovered over and make it active
+        selected = $("> *", container).index($(e.target).is('li') ? $(e.target)[0] : $(e.target).parents('li')[0]);
+        select();
+      })
+      .bind("click.autocomplete", function(e) {
+        $("body").trigger("activate.autocomplete");
+        $.data(document.body, "suppressKey", false);
+      });
+
+    input
+      .bind("keydown.autocomplete", function(e) {
+        var k = e.which || e.keyCode; // in IE e.which is undefined
+
+        switch(k) {
+          case KEY.ESC:
+            $("body").trigger("cancel.autocomplete");
+            break;
+          case KEY.TAB:
+            if (selected == -1){
+              selected = selected >= size - 1 ? 0 : selected + 1;
+              select();
+            } // fall through to KEY.ENTER case
+          case KEY.RETURN:
+            $("body").trigger("activate.autocomplete");
+            break;
+          case KEY.DOWN:
+            selected = selected >= size - 1 ? 0 : selected + 1;
+            select();
+            break;
+          case KEY.UP:
+            selected = selected <= 0 ? size - 1 : selected - 1;
+            select();
+            break;
+          default:
+            return true;
+        }
+
+        $.data(document.body, "suppressKey", true);
+      });
   };
 
 })(jQuery);
