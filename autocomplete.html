@@ -20,6 +20,22 @@
       color: #aaa;
       font-size: 12px;
     }
+    #log{
+      position: fixed;
+      top: 20px;
+      right: 50px;
+      display: none;
+      border: 1px solid #aaa;
+      height: 400px;
+      width: 300px;
+      text-align: center;
+      background-color: white;
+    }
+    #log h2{
+      font-size: 18px;
+      line-height: 30px;
+      border-bottom: 1px solid #aaa;
+    }
   </style>
 
   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
@@ -31,9 +47,11 @@
   <script type="text/javascript">
   //<![CDATA[
     jQuery(function($) {
-      window.console = typeof(window.console) !== 'undefined'
-        ? window.console :
-        { log: function(msg) { $('#log').html(msg + '<br/>\n' + $('#log').html() ); } };
+      if (typeof(window.console) == 'undefined'){
+        window.console = { log: function(msg) { $('#log #updates').html(msg + '<br/>\n' + $('#log #updates').html() ); } };
+        $("#log").show();
+      }
+        
 
       var birds_list = ["Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel"];
       $("input.autocomplete.birds").autocomplete({
@@ -72,7 +90,10 @@
         templateText: "<li><%= pre_match %><span class='matching' ><%= match %></span><%= post_match %></li>"
       });
 
-      $("input.autocomplete").attr("autocomplete","off");
+      $("input.autocomplete")
+        .bind("activate.autocomplete", function(e, d) { console.log(d); })
+        .bind("cancel.autocomplete", function(e) { console.log("Cancelled"); })
+        .attr("autocomplete","off");
         
       prettyPrint();
     });
@@ -209,6 +230,9 @@ $("input.autocomplete.weird-names").autocomplete({
   <p>
     The url of the originally forked repo is <a href="http://github.com/ReinH/jquery-autocomplete/tree/master">http://github.com/ReinH/jquery-autocomplete/tree/master</a>.
   </p>
-<div id="log"></div>
+<div id="log">
+  <h2>Log :</h2>
+  <div id="updates"></div>
+</div>
 </body>
 </html>
