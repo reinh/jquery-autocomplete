@@ -8,6 +8,7 @@
   <meta name="generator" content="TextMate http://macromates.com/" />
   <meta name="author" content="Yehuda Katz" />
   <meta name="author" content="Nikos Dimitrakopoulos" />
+  <meta name="author" content="Emmanuel Gomez" />
   <link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen" />
   <link rel="stylesheet" href="prettify/prettify.css" type="text/css" media="screen" />
   <style type="text/css">
@@ -68,10 +69,7 @@
         templateText: "<li><%= pre_match %><span class='matching' ><%= match %></span><%= post_match %></li>"
       });
 
-      $("input.autocomplete")
-        .bind("activate.autocomplete", function(e, d) { console.log(d); })
-        .bind("cancel.autocomplete", function(e) { console.log("Cancelled"); })
-        .attr("autocomplete","off");
+      $("input.autocomplete").attr("autocomplete","off");
         
       prettyPrint();
     });
