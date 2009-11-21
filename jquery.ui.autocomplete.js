@@ -43,8 +43,9 @@
       threshold: 100,
       getList: function(input) { input.trigger("updateList", [opt.list]); },
       updateList: function(list, val) {
+        var matcher = opt.matcher(val);
         list = $(list)
-          .filter(function() { return opt.match.call(this, val); })
+          .filter(function() { return opt.match.call(this, matcher); })
           .map(function() {
             var node = $(opt.template(this))[0];
             $.data(node, "originalObject", this);
@@ -56,8 +57,8 @@
         var container = list.wrapAll(opt.wrapper).parents(":last").children();
         // IE seems to wrap the wrapper in a random div wrapper so
         // drill down to the node in opt.wrapper.
-        var wrapper_tagName = $(opt.wrapper)[0].tagName;
-        for (;container[0].tagName !== wrapper_tagName; container = container.children(':first')) {}
+        var wrapperTagName = $(opt.wrapper)[0].tagName;
+        while (container[0].tagName !== wrapperTagName) { container = container.children(':first'); }
         return container;
       },
       dismissList: function(container) {
@@ -65,7 +66,8 @@
       },
       template: function(str) { return "<li>" + opt.insertText(str) + "</li>"; },
       insertText: function(str) { return str; },
-      match: function(typed) { return this.match(new RegExp(typed)); },
+      match: function(regex) { return this.match(regex); },
+      matcher: function(typed) { return new RegExp(typed); },
       wrapper: "<ul class='jq-ui-autocomplete'></ul>"
     }, opt);
 
