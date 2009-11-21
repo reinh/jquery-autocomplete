@@ -41,7 +41,7 @@
     opt = $.extend({}, {
       timeout: 500,
       threshold: 100,
-      getList: function(input) { input.trigger("updateList", [opt.list]); },
+      getList: function(input) { input.triggerHandler("updateList", [opt.list]); },
       filterList: function(list, val) {
         var matcher = opt.matcher(val);
         return $(list).filter(function() {
@@ -110,7 +110,7 @@
     
     function startTypingTimeout(e, element) {
       $.data(element, "typingTimeout", window.setTimeout(function() {
-        $(e.target || e.srcElement).trigger("autocomplete");
+        $(e.target || e.srcElement).triggerHandler("autocomplete");
       }, opt.timeout));
     }
 
@@ -150,7 +150,7 @@
             if (container === false) return false;
             list = container.find("li");
 
-            $("body").trigger("off.autocomplete");
+            $("body").triggerHandler("off.autocomplete");
             if(!list.length || list.length > opt.threshold) return false;
 
             opt.container = opt.displayList(self, container);
@@ -171,17 +171,16 @@
     $.data(document.body, "autocompleteMode", true);
 
     $("body").one("cancel.autocomplete", function() {
-      input.trigger("cancel.autocomplete");
-      $("body").trigger("off.autocomplete");
+      input.triggerHandler("cancel.autocomplete");
+      $("body").triggerHandler("off.autocomplete");
       input.val(original);
     });
 
     $("body").one("activate.autocomplete", function() {
       // Try hitting return to activate autocomplete and then hitting it again on blank input
-      // to close it.  w/o checking the active object first this input.trigger() will barf.
-      active && input.trigger("activate.autocomplete", [$.data(active[0], "originalObject")]);
-      $("body").trigger("off.autocomplete");
+      // to close it.  w/o checking the active object first this input.triggerHandler() will barf.
       active && input.triggerHandler("activate.autocomplete", [$.data(active[0], "originalObject"), active]);
+      $("body").triggerHandler("off.autocomplete");
     });
 
     $("body").one("off.autocomplete", function(e, reset) {
@@ -221,7 +220,7 @@
         select();
       })
       .bind("click.autocomplete", function(e) {
-        $("body").trigger("activate.autocomplete");
+        $("body").triggerHandler("activate.autocomplete");
         $.data(document.body, "suppressKey", false);
       });
 
@@ -231,7 +230,7 @@
 
         switch(k) {
           case KEY.ESC:
-            $("body").trigger("cancel.autocomplete");
+            $("body").triggerHandler("cancel.autocomplete");
             break;
           case KEY.TAB:
             if (selected == -1){
@@ -239,7 +238,7 @@
               select();
             } // fall through to KEY.ENTER case
           case KEY.RETURN:
-            $("body").trigger("activate.autocomplete");
+            $("body").triggerHandler("activate.autocomplete");
             break;
           case KEY.DOWN:
             selected = selected >= size - 1 ? 0 : selected + 1;
