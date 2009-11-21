@@ -188,25 +188,36 @@
       opt.dismissList(container);
       $.data(document.body, "autocompleteMode", false);
       input.unbind("keydown.autocomplete");
-      $("body").add(window).unbind("click.autocomplete").unbind("cancel.autocomplete").unbind("activate.autocomplete");
+      $("body").add(window)
+        .unbind("click.autocomplete")
+        .unbind("cancel.autocomplete")
+        .unbind("activate.autocomplete");
     });
 
     // If a click bubbles all the way up to the window, close the autocomplete
-    $(window).bind("click.autocomplete", function() { $("body").trigger("cancel.autocomplete"); });
+    $(window).bind("click.autocomplete", function() {
+      $("body").triggerHandler("cancel.autocomplete");
+    });
 
     var select = function() {
-      active = $("> *", container).removeClass("active").slice(selected, selected + 1).addClass("active");
-      input.trigger("itemSelected.autocomplete", [$.data(active[0], "originalObject")]);
-      input.val(opt.insertText($.data(active[0], "originalObject")));
+      active = container.find("li")
+        .removeClass("active")
+        .filter(":visible")
+        .slice(selected, selected + 1)
+        .addClass("active");
+      if (active.length) {
+        input.triggerHandler("itemSelected.autocomplete", [$.data(active[0], "originalObject"), active]);
+        input.val(opt.inputText($.data(active[0], "originalObject")));
+      }
     };
 
     container
       .mouseover(function(e) {
         // If you hover over the container, but not its children, return
         if(e.target == container[0]) return;
-        
+        var selectedItem = $(e.target).is('li') ? $(e.target)[0] : $(e.target).parents('li')[0];
         // Set the selected item to the item hovered over and make it active
-        selected = $("> *", container).index($(e.target).is('li') ? $(e.target)[0] : $(e.target).parents('li')[0]);
+        selected = container.find("li").index(selectedItem);
         select();
       })
       .bind("click.autocomplete", function(e) {
