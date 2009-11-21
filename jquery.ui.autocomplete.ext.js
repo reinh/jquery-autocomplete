@@ -27,7 +27,7 @@
   $.ui.autocomplete.ext.ajax = function(opt) {
     var ajax = opt.ajax;
     return { getList: function(input) { 
-			if (input.val().match(/^\s*$/)) return false;
+      if (input.val().match(/^\s*$/)) return false;
       $.getJSON(ajax, { val: input.val() }, function(json) { input.trigger("updateList", [json]); });
     } };
   };
