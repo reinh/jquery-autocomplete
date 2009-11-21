@@ -181,6 +181,7 @@
       // to close it.  w/o checking the active object first this input.trigger() will barf.
       active && input.trigger("activate.autocomplete", [$.data(active[0], "originalObject")]);
       $("body").trigger("off.autocomplete");
+      active && input.triggerHandler("activate.autocomplete", [$.data(active[0], "originalObject"), active]);
     });
 
     $("body").one("off.autocomplete", function(e, reset) {
