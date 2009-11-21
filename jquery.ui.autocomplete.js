@@ -64,6 +64,17 @@
         while (container[0].tagName !== wrapperTagName) { container = container.children(':first'); }
         return container;
       },
+      displayList: function(input, container) {
+        var offset = input.offset();
+        container
+          .css({
+            top: offset.top + input.outerHeight(),
+            left: offset.left,
+            width: input.width()
+          })
+          .appendTo("body");
+        return container;
+      },
       dismissList: function(container) {
         container.remove();
       },
@@ -138,10 +149,7 @@
             $("body").trigger("off.autocomplete");
             if(!list.length || list.length > opt.threshold) return false;
 
-            var offset = self.offset();
-            opt.container = listContainer
-              .css({top: offset.top + self.outerHeight(), left: offset.left, width: self.width()})
-              .appendTo("body");
+            opt.container = opt.displayList(self, container);
 
             $("body").autocompleteMode(listContainer, self, list.length, opt);
           });
