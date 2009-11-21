@@ -42,15 +42,18 @@
       timeout: 500,
       threshold: 100,
       getList: function(input) { input.trigger("updateList", [opt.list]); },
-      updateList: function(list, val) {
+      filterList: function(list, val) {
         var matcher = opt.matcher(val);
-        list = $(list)
-          .filter(function() { return opt.match.call(this, matcher); })
-          .map(function() {
-            var node = $(opt.template(this))[0];
-            $.data(node, "originalObject", this);
-            return node;
-          });
+        return $(list).filter(function() {
+          return opt.match.call(this, matcher);
+        });
+      },
+      updateList: function(unfilteredList, val) {
+        list = filterList(unfilteredList, val).map(function() {
+          var node = $(opt.template(this))[0];
+          $.data(node, "originalObject", this);
+          return node;
+        });
 
         if(!list.length || list.length > opt.threshold) { return false; }
 
