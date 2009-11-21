@@ -23,7 +23,7 @@
 
   $.ui = $.ui || {};
   $.ui.autocomplete = $.ui.autocomplete || {};
-  var active;
+  var active = {};
 
   var KEY = {
     ESC: 27,
