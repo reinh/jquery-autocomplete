@@ -39,16 +39,65 @@
 
     /* Default options */
     opt = $.extend({}, {
+      /**
+       * Milliseconds after the last keystroke to (re-)filter the list
+       */
       timeout: 500,
+      /**
+       * How many options are too many?
+       * if there are more matches than threshold, the list will not be displayed
+       */
       threshold: 100,
+      /**
+       * Get the complete list of items
+       * override this to control how to get the list of potential matches
+       * default is to use the 'list' option passed during initialization
+       *  and trigger "updateList" event with list as data
+       *
+       * @param input the text input being autocompleted
+       */
       getList: function(input) { input.triggerHandler("updateList", [opt.list]); },
+      /**
+       * Called to determine if a given data item matches the user's input
+       *
+       * @param _this_ data item being tested for match
+       * @param _matcher_ regex to test the item with
+       * @return boolean true if this data item matches user input
+       */
+      match: function(matcher) { return this.match(matcher); },
+      /**
+       * Called to build the matcher
+       *
+       * @param _typed_ the text entered by user in the text input
+       * @return regex used to filter the complete list
+       */
+      matcher: function(typed) { return new RegExp(typed); },
+      /**
+       * Update the list of matching items
+       * override this to control how the filtered list is generated from the complete list
+       *
+       * @param list complete list to be filtered
+       * @param val text entered in the text input
+       * @return filtered list with items that match _val_ (however matching is defined)
+       */
       filterList: function(list, val) {
         var matcher = opt.matcher(val);
-        return $(list).filter(function() {
+        return $.grep(list, function() {
           return opt.match.call(this, matcher);
         });
       },
+      /**
+       * Build the list of matches
+       * override this to control how markup is built from the list of matches
+       * make sure the elements in the list have the matching object
+       * in their $.fn.data as "originalObject"
+       *
+       * @param input the text input being autocompleted
+       * @param container the container of the list of matches (typically an ol/ul)
+       * @return container
+       */
       buildList: function(list){
+        // listItems must be a jQuery object
         var listItems = $(list).map(function() {
           var node = $(opt.template(this))[0];
           $.data(node, "originalObject", this);
@@ -63,11 +112,31 @@
         }
         return container;
       },
+      wrapper: "<ul class='jq-ui-autocomplete'></ul>",
+      /**
+       * Update the list of matching items
+       * override this to control how markup is built from the list of matches
+       *
+       * @param unfilteredList unfiltered list of potential matches
+       * @param val the text in the input field
+       *
+       * @return container (which should be positioned and visible)
+       */
       updateList: function(unfilteredList, val) {
         var list = filterList(unfilteredList, val);
         if(list.length == 0 || list.length > opt.threshold) return false;
         return buildList(list);
       },
+      /**
+       * Display the list of matches
+       * override this to control the container position or size
+       * or to skip appending the list to the html body
+       *
+       * @param input the text input being autocompleted
+       * @param container the container of the list of matches (typically an ol/ul)
+       *
+       * @return container (which should be positioned and visible)
+       */
       displayList: function(input, container) {
         var offset = input.offset();
         container
@@ -79,14 +148,18 @@
           .appendTo("body");
         return container;
       },
+      /**
+       * Dismiss the list of matches
+       * override this to control how the list container is dismissed
+       * default is to remove the element
+       *
+       * @param container the container of the list of matches (typically an ol/ul)
+       */
       dismissList: function(container) {
         container.remove();
       },
       template: function(str) { return "<li>" + opt.insertText(str) + "</li>"; },
-      insertText: function(str) { return str; },
-      match: function(regex) { return this.match(regex); },
-      matcher: function(typed) { return new RegExp(typed); },
-      wrapper: "<ul class='jq-ui-autocomplete'></ul>"
+      insertText: function(str) { return str; }
     }, opt);
 
     /* 
