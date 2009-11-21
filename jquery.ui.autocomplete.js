@@ -48,21 +48,25 @@
           return opt.match.call(this, matcher);
         });
       },
-      updateList: function(unfilteredList, val) {
-        list = filterList(unfilteredList, val).map(function() {
+      buildList: function(list){
+        var listItems = $(list).map(function() {
           var node = $(opt.template(this))[0];
           $.data(node, "originalObject", this);
           return node;
         });
-
-        if(!list.length || list.length > opt.threshold) { return false; }
-
-        var container = list.wrapAll(opt.wrapper).parents(":last").children();
+        var container = listItems.wrapAll(opt.wrapper).parents(":last").children();
         // IE seems to wrap the wrapper in a random div wrapper so
         // drill down to the node in opt.wrapper.
         var wrapperTagName = $(opt.wrapper)[0].tagName;
-        while (container[0].tagName !== wrapperTagName) { container = container.children(':first'); }
+        while (container[0].tagName !== wrapperTagName) {
+          container = container.children(':first');
+        }
         return container;
+      },
+      updateList: function(unfilteredList, val) {
+        var list = filterList(unfilteredList, val);
+        if(list.length == 0 || list.length > opt.threshold) return false;
+        return buildList(list);
       },
       displayList: function(input, container) {
         var offset = input.offset();
@@ -142,16 +146,16 @@
           var self = $(this);
 
           self.one("updateList", function(e, list) {
-            var listContainer = opt.updateList(list, self.val());
-            if (listContainer === false) return false;
-            list = listContainer.find("li");
+            var container = opt.updateList(list, self.val());
+            if (container === false) return false;
+            list = container.find("li");
 
             $("body").trigger("off.autocomplete");
             if(!list.length || list.length > opt.threshold) return false;
 
             opt.container = opt.displayList(self, container);
 
-            $("body").autocompleteMode(listContainer, self, list.length, opt);
+            $("body").autocompleteMode(opt.container, self, list.length, opt);
           });
 
           opt.getList(self);
