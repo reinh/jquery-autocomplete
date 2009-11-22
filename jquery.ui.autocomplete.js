@@ -254,15 +254,17 @@
     $.data(document.body, "autocompleteMode", true);
 
     $("body").one("cancel.autocomplete", function() {
-      input.triggerHandler("cancel.autocomplete");
+      input.triggerHandler("cancelled.autocomplete");
       $("body").triggerHandler("off.autocomplete");
       input.val(original);
     });
 
-    $("body").one("activate.autocomplete", function() {
+    $("body").one("activate.autocomplete", function(e) {
       // Try hitting return to activate autocomplete and then hitting it again on blank input
       // to close it.  w/o checking the active object first this input.triggerHandler() will barf.
-      active && input.triggerHandler("activate.autocomplete", [$.data(active[0], "originalObject"), active]);
+      if (active.length) {
+        input.triggerHandler("activated.autocomplete", [$.data(active[0], "originalObject"), active]);
+      }
       $("body").triggerHandler("off.autocomplete");
     });
 
