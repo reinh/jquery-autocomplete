@@ -164,7 +164,13 @@
         container.remove();
       },
       template: function(str) { return "<li>" + opt.insertText(str) + "</li>"; },
-      insertText: function(str) { return str; }
+      /**
+       * Provide a value for the text input from the active object,
+       * also used to fill the li element in the default _template_ implementation
+       *
+       * @param str active item in the list
+       */
+      insertText: function(item) { return item; }
     }, opt);
 
     /* 
@@ -283,7 +289,7 @@
         .addClass("active");
       if (active.length) {
         input.triggerHandler("itemSelected.autocomplete", [$.data(active[0], "originalObject"), active]);
-        input.val(opt.inputText($.data(active[0], "originalObject")));
+        input.val(opt.insertText($.data(active[0], "originalObject")));
       }
     };
 
