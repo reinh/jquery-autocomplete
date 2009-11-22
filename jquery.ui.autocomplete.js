@@ -192,21 +192,23 @@
       }, opt.timeout));
     }
 
+    function  handleKeyDownUp(e) {
+      var k = e.which || e.keycode;
+      if ((k == KEY.UP || k == KEY.DOWN) && !$.data(this, "typingTimeout")) {
+        startTypingTimeout(e, this);
+      } else if (k == KEY.BS || k == KEY.DEL) {
+        var typingTimeout = $.data(this, "typingTimeout");
+        if (typingTimeout) window.clearInterval(typingTimeout);
+        startTypingTimeout(e, this);
+      } else {
+        preventTabInAutocompleteMode(e);
+      }
+    }
+
     return this.each(function() {
       $(this)
-        .keydown(function(e) {
-          preventTabInAutocompleteMode(e);
-        })
-        .keyup(function(e) {
-          var k = e.which || e.keycode;
-          if (!$.data(document.body, "autocompleteMode") &&
-              (k == KEY.UP || k == KEY.DOWN) &&
-              !$.data(this, "typingTimeout")) {
-            startTypingTimeout(e, this);
-          } else {
-            preventTabInAutocompleteMode(e);
-          }
-        })
+        .keydown(handleKeyDownUp)
+        .keyup(handleKeyDownUp)
         .keypress(function(e) {
           var typingTimeout = $.data(this, "typingTimeout");
           var k = e.keyCode || e.which; // keyCode == 0 in Gecko/FF on keypress
