@@ -185,7 +185,7 @@
         e.preventDefault();
       }
     }
-    
+
     function startTypingTimeout(e, element) {
       $.data(element, "typingTimeout", window.setTimeout(function() {
         $(e.target || e.srcElement).triggerHandler("autocomplete");
@@ -225,17 +225,14 @@
         .bind("autocomplete", function() {
           var self = $(this);
 
-          self.one("updateList", function(e, list) {
-            var container = opt.updateList(list, self.val());
-            if (container === false) return false;
-            list = container.find("li");
-
+          self.one("updateList", function(e, completeList) {
+            var container = opt.updateList(completeList, self.val());
+            // turn off autcomplete mode even if the list is empty (container === false)
             $("body").triggerHandler("off.autocomplete");
-            if(!list.length || list.length > opt.threshold) return false;
+            if (container === false) return false;
 
             opt.container = opt.displayList(self, container);
-
-            $("body").autocompleteMode(opt.container, self, list.length, opt);
+            $("body").autocompleteMode(opt.container, self, container.find("li").length, opt);
           });
 
           opt.getList(self);
