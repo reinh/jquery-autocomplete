@@ -56,7 +56,9 @@
        *
        * @param input the text input being autocompleted
        */
-      getList: function(input) { input.triggerHandler("updateList", [opt.list]); },
+      getList: function(input) {
+        input.triggerHandler("updateList", [opt.list]);
+      },
       /**
        * Called to determine if a given data item matches the user's input
        *
@@ -64,14 +66,18 @@
        * @param _matcher_ regex to test the item with
        * @return boolean true if this data item matches user input
        */
-      match: function(matcher) { return this.match(matcher); },
+      match: function(text, matcher) {
+        return text.match(matcher);
+      },
       /**
        * Called to build the matcher
        *
        * @param _typed_ the text entered by user in the text input
        * @return regex used to filter the complete list
        */
-      matcher: function(typed) { return new RegExp(typed); },
+      matcher: function(typed) {
+        return new RegExp(typed);
+      },
       /**
        * Update the list of matching items
        * override this to control how the filtered list is generated from the complete list
