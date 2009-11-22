@@ -88,9 +88,23 @@
        */
       filterList: function(list, val) {
         var matcher = opt.matcher(val);
-        return $.grep(list, function() {
-          return opt.match.call(this, matcher);
+        return $.grep(list, function(text, i) {
+          return opt.match(text, matcher);
         });
+      },
+      /**
+       * Update the list of matching items
+       * override this to control how markup is built from the list of matches
+       *
+       * @param unfilteredList unfiltered list of potential matches
+       * @param val the text in the input field
+       *
+       * @return container (which should be positioned and visible)
+       */
+      updateList: function(unfilteredList, val) {
+        var list = opt.filterList(unfilteredList, val);
+        if(list.length == 0 || list.length > opt.threshold) return false;
+        return opt.buildList(list);
       },
       /**
        * Build the list of matches
@@ -119,20 +133,6 @@
         return container;
       },
       wrapper: "<ul class='jq-ui-autocomplete'></ul>",
-      /**
-       * Update the list of matching items
-       * override this to control how markup is built from the list of matches
-       *
-       * @param unfilteredList unfiltered list of potential matches
-       * @param val the text in the input field
-       *
-       * @return container (which should be positioned and visible)
-       */
-      updateList: function(unfilteredList, val) {
-        var list = filterList(unfilteredList, val);
-        if(list.length == 0 || list.length > opt.threshold) return false;
-        return buildList(list);
-      },
       /**
        * Display the list of matches
        * override this to control the container position or size
