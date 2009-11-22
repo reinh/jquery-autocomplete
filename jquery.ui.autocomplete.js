@@ -304,6 +304,13 @@
         selected = container.find("li").index(selectedItem);
         select();
       })
+      // IE8 was triggering spurious activate events when clicking outside
+      // the container when a list item was active. I couldn't figure out where
+      // the activate events were coming from, so I'm deactivating the list
+      .mouseout(function(e) {
+        selected = -1;
+        select();
+      })
       .bind("click.autocomplete", function(e) {
         $("body").triggerHandler("activate.autocomplete");
         $.data(document.body, "suppressKey", false);
