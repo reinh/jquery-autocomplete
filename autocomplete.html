@@ -92,9 +92,8 @@
       });
 
       $("input.autocomplete")
-        .bind("activate.autocomplete", function(e, d) { console.log(d); })
-        .bind("cancel.autocomplete", function(e) { console.log("Cancelled"); })
-        .attr("autocomplete","off");
+        .bind("activated.autocomplete", function(e, d) { console.log(d); })
+        .bind("cancelled.autocomplete", function(e) { console.log("Cancelled"); });
         
       prettyPrint();
     });
