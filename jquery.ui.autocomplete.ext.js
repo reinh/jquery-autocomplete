@@ -26,7 +26,7 @@
    */
   $.ui.autocomplete.ext.ajax = function(opt) {
     var ajax = opt.ajax;
-    return { getList: function(input) { 
+    return { getList: function(input) {
       if (input.val().match(/^\s*$/)) return false;
       $.getJSON(ajax, { val: input.val() }, function(json) { input.trigger("updateList", [json]); });
     } };
@@ -36,10 +36,13 @@
    * @description Overrides the default 'template' option.
    *
    * @param {Object} opt Should contain a .templateText string with the template to parse and return.
+   *    if .templateBegin or .templateEnd are present,
+   *    they will determine begin/end tags in template compilation
    * @returns A function that executes the given template with the obj passed to it.
    */
   $.ui.autocomplete.ext.templateText = function(opt) {
-    var template = $.makeTemplate(opt.templateText, "<%", "%>");
+    var begin = opt.templateBegin || "<%", end = opt.templateEnd || "%>";
+    var template = $.makeTemplate(opt.templateText, begin, end);
     return { template: function(obj) { return template(obj); } };
   };
   
