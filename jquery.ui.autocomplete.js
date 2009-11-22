@@ -112,22 +112,21 @@
        * make sure the elements in the list have the matching object
        * in their $.fn.data as "originalObject"
        *
-       * @param input the text input being autocompleted
-       * @param container the container of the list of matches (typically an ol/ul)
+       * @param list list of items matching user input
        * @return container
        */
-      buildList: function(list){
-        // listItems must be a jQuery object
+      buildList: function(list) {
         var listItems = $(list).map(function() {
           var node = $(opt.template(this))[0];
           $.data(node, "originalObject", this);
           return node;
         });
-        var container = listItems.wrapAll(opt.wrapper).parents(":last").children();
         // IE seems to wrap the wrapper in a random div wrapper so
         // drill down to the node in opt.wrapper.
-        var wrapperTagName = $(opt.wrapper)[0].tagName;
-        while (container[0].tagName !== wrapperTagName) {
+        var container = $(opt.wrapper).append(listItems);// .parents(":last").children();
+        // TODO: need to verify that parents(":last").children really does the below
+        var wrapTag = $(opt.wrapper)[0].tagName;
+        while (container[0].tagName !== wrapTag) {
           container = container.children(':first');
         }
         return container;
