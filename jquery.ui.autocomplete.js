@@ -292,6 +292,9 @@
       if (active.length) {
         input.triggerHandler("itemSelected.autocomplete", [$.data(active[0], "originalObject"), active]);
         input.val(opt.insertText($.data(active[0], "originalObject")));
+      } else {
+        input.triggerHandler("noneSelected.autocomplete");
+        input.val(original);
       }
     };
 
