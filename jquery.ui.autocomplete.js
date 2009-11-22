@@ -243,6 +243,7 @@
 
           opt.getList(self);
         });
+      if (typeof opt.init == "function") opt.init(self);
     });
   };
 
