@@ -213,6 +213,7 @@
 
     return this.each(function() {
       $(this)
+        .attr("autocomplete", "off")
         .keydown(handleKeyDownUp)
         .keyup(handleKeyDownUp)
         .keypress(function(e) {
@@ -243,6 +244,7 @@
 
           opt.getList(self);
         });
+
       if (typeof opt.init == "function") opt.init(self);
     });
   };
