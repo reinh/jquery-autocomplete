@@ -232,8 +232,8 @@
         .bind("autocomplete", function() {
           var self = $(this);
 
-          self.one("updateList", function(e, completeList) {
-            var container = opt.updateList(completeList, self.val());
+          self.one("updateList", function(e, completeList, matchVal) {
+            var container = opt.updateList(completeList, matchVal || self.val());
             // turn off autcomplete mode even if the list is empty (container === false)
             $("body").triggerHandler("off.autocomplete");
             if (container === false) return false;
