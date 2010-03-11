@@ -55,7 +55,11 @@
       /**
 	   * Maximum number of items to show. By default show all.
 	   */
-	  maxResults: undefined,
+      maxResults: undefined,
+      /**
+       * Minumum number of characters needed before starting the autocomplete
+       */
+      minCharacters: 0,
       /**
       * Get the complete list of items
       * override this to control how to get the list of potential matches
@@ -123,9 +127,10 @@
        * @return container (which should be positioned and visible)
        */
       updateList: function(unfilteredList, val) {
-		if (val.length <=2) {
-			return false;
-		}
+        if (opt.minCharacters && val.length <= opt.minCharacters) {
+          return false;
+        }
+
         var list = opt.filterList(unfilteredList, val);
         if(list.length == 0 || list.length > opt.threshold) {return false;}
         return opt.buildList(list);
