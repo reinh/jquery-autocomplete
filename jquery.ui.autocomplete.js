@@ -1,8 +1,7 @@
 /* jQuery Autocomplete
  * Version 1.1 (07/10/2009)
  * Written by Yehuda Katz (wycats@gmail.com) and Rein Henrichs (reinh@reinh.com)
- * Forked and maintained by Nikos Dimitrakopoulos (os@nikosd.com)
- * Additional contributions from Emmanuel Gomez, Austin King
+ * Additional contributions from Emmanuel Gomez, Austin King, Nikos Dimitrakopoulos, Javier Gonel
  * @requires jQuery v1.2, jQuery dimensions plugin
  *
  * Copyright 2007-2009 Yehuda Katz, Rein Henrichs
@@ -48,14 +47,23 @@
        * if there are more matches than threshold, the list will not be displayed
        */
       threshold: 100,
+	  /**
+	   * By default the with of the input box is used for the autocomplete
+	   * suggestions. If you want to change that, specify here a width in pixels.
+	   */
+      adjustWidth: true,
       /**
-       * Get the complete list of items
-       * override this to control how to get the list of potential matches
-       * default is to use the 'list' option passed during initialization
-       *  and trigger "updateList" event with list as data
-       *
-       * @param input the text input being autocompleted
-       */
+	   * Maximum number of items to show. By default show all.
+	   */
+	  maxResults: undefined,
+      /**
+      * Get the complete list of items
+      * override this to control how to get the list of potential matches
+      * default is to use the 'list' option passed during initialization
+      *  and trigger "updateList" event with list as data
+      *
+      * @param input the text input being autocompleted
+      */
       getList: function(input) {
         input.triggerHandler("updateList", [opt.list]);
       },
@@ -87,10 +95,23 @@
        * @return filtered list with items that match _val_ (however matching is defined)
        */
       filterList: function(list, val) {
-        var matcher = opt.matcher(val);
-        return $.grep(list, function(text, i) {
-          return opt.match(text, matcher);
-        });
+        var matcher = opt.matcher(val),
+            grepCallback = function(text, i) {
+			  return opt.match(text, matcher);
+			},
+			index = 0;
+			
+		if (this.maxResults) {
+			grepCallback = function(text, i) {
+				if (index>this.maxResults) {
+					return false;
+				}
+				index++;
+				return opt.match(text, matcher);
+			};
+		}
+
+		return $.grep(list, grepCallback);
       },
       /**
        * Update the list of matching items
@@ -102,8 +123,11 @@
        * @return container (which should be positioned and visible)
        */
       updateList: function(unfilteredList, val) {
+		if (val.length <=2) {
+			return false;
+		}
         var list = opt.filterList(unfilteredList, val);
-        if(list.length == 0 || list.length > opt.threshold) return false;
+        if(list.length == 0 || list.length > opt.threshold) {return false;}
         return opt.buildList(list);
       },
       /**
@@ -148,7 +172,7 @@
           .css({
             top: offset.top + input.outerHeight(),
             left: offset.left,
-            width: input.width()
+            width: this.adjustWidth?input.width():undefined
           })
           .appendTo("body");
         return container;
@@ -330,12 +354,14 @@
           case KEY.ESC:
             $("body").triggerHandler("cancel.autocomplete");
             break;
+			// TAB & Return behave in the same way.
           case KEY.TAB:
-            if (selected == -1){
-              selected = selected >= size - 1 ? 0 : selected + 1;
-              select();
-            } // fall through to KEY.ENTER case
-          case KEY.RETURN:
+		  case KEY.RETURN:
+            if (selected == -1) {
+				// If nothing is selected, select the first
+				selected = selected >= size - 1 ? 0 : selected + 1;
+				select();
+            } 
             $("body").triggerHandler("activate.autocomplete");
             break;
           case KEY.DOWN:

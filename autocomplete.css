@@ -1,0 +1,27 @@
+.matching {
+      font-weight: bold;
+      text-decoration: underline;
+}
+.included-options{
+      color: #aaa;
+      font-size: 12px;
+}
+
+/* Log window */
+#log{
+     position: fixed;
+     top: 20px;
+     right: 50px;
+     display: none;
+     border: 1px solid #aaa;
+     height: 400px;
+     width: 300px;
+     text-align: center;
+     background-color: white;
+}
+#log h2{
+      font-size: 18px;
+      line-height: 30px;
+      border-bottom: 1px solid #aaa;
+}
+
