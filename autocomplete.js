@@ -14,43 +14,52 @@ jQuery(function($) {
 		$("#log").show();
 	}
 
-	// 1. First example
+		// Basic example
       var birds_list = ["Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel"];
       $("input.autocomplete.birds").autocomplete({
         list: birds_list
       });
 			
-			
+		// Width example	
       $("input.autocomplete.birds2").autocomplete({
         list: birds_list,
 				adjustWidth:false,
 				wrapper: '<ul class="jq-ui-autocomplete mybigbirdlist"></ul>',
       });
 
-
-      $("input.autocomplete.big-cats").autocomplete({
-        ajax: "list",
-        timeout: 500,
-        threshold: 2,
-        match: function(typed) { return this.text.match(new RegExp(typed, "i")); },
-        insertText: function(obj) { return obj.text; },
-        templateText: "<li>Available cats: <%= text %></li>"
-      });
+		// 
+	$("input.autocomplete.big-cats").autocomplete({
+ 		ajax: "list",
+		match: function(element, matcher) { 
+			return element.text.match(matcher); 
+		},
+		insertText: function(obj) { 
+			return obj.text; 
+		},
+		templateText: "<li>Available cats: <%= text %></li>"
+	});
 
       var weird_names_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
       $("input.autocomplete.weird-names").autocomplete({
         list: weird_names_list,
         timeout: 0,
-        match: function(typed) {
-          this.typed = typed;
-          this.pre_match = this.text;
-          this.match = this.post_match = '';
-          if (!this.ajax && !typed || typed.length == 0) { return true; }
-          var match_at = this.text.search(new RegExp("\\b" + typed, "i"));
+				matcher: function(typed) {
+					if (!typed || typed.length == 0) return undefined;
+					var reg = new RegExp("\\b" + typed, "i");
+					reg.typed = typed;
+					return reg;
+				},
+        match: function(element, matcher) {
+					if (!matcher) { return false; }
+					var typed = matcher.typed;
+          element.typed = typed;
+          element.pre_match = element.text;
+          element.match = element.post_match = '';
+          var match_at = element.text.search(matcher);
           if (match_at != -1) {
-            this.pre_match = this.text.slice(0,match_at);
-            this.match = this.text.slice(match_at,match_at + typed.length);
-            this.post_match = this.text.slice(match_at + typed.length);
+            element.pre_match = element.text.slice(0,match_at);
+            element.match = element.text.slice(match_at,match_at + typed.length);
+            element.post_match = element.text.slice(match_at + typed.length);
             return true;
           }
           return false;
@@ -60,7 +69,7 @@ jQuery(function($) {
       });
 
       $("input.autocomplete")
-        .bind("activated.autocomplete", function(e, d) { console.log(d); })
+        .bind("activated.autocomplete", function(e, d) { console.log("activated.autocomplete: "+d); })
         .bind("cancelled.autocomplete", function(e) { console.log("Cancelled"); });
         
       prettyPrint();
