@@ -14,12 +14,19 @@ jQuery(function($) {
 		$("#log").show();
 	}
 
-
+	// 1. First example
       var birds_list = ["Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel"];
       $("input.autocomplete.birds").autocomplete({
-        list: birds_list,
-        timeout: 100
+        list: birds_list
       });
+			
+			
+      $("input.autocomplete.birds2").autocomplete({
+        list: birds_list,
+				adjustWidth:false,
+				wrapper: '<ul class="jq-ui-autocomplete mybigbirdlist"></ul>',
+      });
+
 
       $("input.autocomplete.big-cats").autocomplete({
         ajax: "list",

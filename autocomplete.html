@@ -25,19 +25,13 @@
   
   <h2>Examples</h2>
     <h3>A really simple example</h3>
-    <p> A really simple example using a local array and the dafault options.</p>
+    <p>This example uses a local array and the dafault options.</p>
     <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
-      <p>
-        <label for="bird-name">
+    	<label for="bird-name">
           Local list <span class="included-options">("Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel")</span> :
         </label>
-        <br />
         <input id="bird-name" name="bird-name" type="text" class="autocomplete birds" />
-        <br />
-
-        <br />
         <input type="submit" value="Submit"/>
-      </p>
     </form>
     <p>The source code :</p>
     <pre class="prettyprint"><code>
@@ -46,8 +40,7 @@ $("input.autocomplete.birds").autocomplete({
   list: birds_list
 })
       </code></pre>
-
-    <h3>More advanced remote JSON example</h3>
+	    <h3>More advanced remote JSON example</h3>
     <p>Basic tweaking and getting the results from a remote web service</p>
     <ul>
       <li>Changing the default list elements type by passing the .text object to matcher and 'insertText' / 'templateText'.</li>
@@ -123,6 +116,30 @@ $("input.autocomplete.weird-names").autocomplete({
   templateText: "&lt;li&gt;<%= pre_match %>&lt;span class='matching' &gt;<%= match %>&lt;/span&gt;<%= post_match %>&lt;/li&gt;"
 });
       </code></pre>
+	<h3>Width of the autocomplete box</h3>
+		<p>Did you find too big bird names? Lets autoadjust the size of the autocomplete box.</p>
+		<form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
+	    	<label for="bird-name2">
+          Local list 
+	<span class="included-options">("Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel")</span> :
+        </label>
+        <input id="bird-name2" name="bird-name2" type="text" class="autocomplete birds2" />
+        <input type="submit" value="Submit"/>
+		</form>
+	<p>The source code :
+<pre class="prettyprint lang-js"><code>
+$("input.autocomplete.birds2").autocomplete({
+	list: birds_list,
+	adjustWidth:false,
+	wrapper: '&lt;ul class="jq-ui-autocomplete mybigbirdlist"&gt;</ul>',
+});
+
+</code></pre>
+And the css:
+<pre class="prettyprint lang-css"><code>
+ul.mybigbirdlist { display:cell }
+</code></pre>
+</p>
 
   <h2>Source &amp; downloads</h2>
   <p>
@@ -134,15 +151,6 @@ $("input.autocomplete.weird-names").autocomplete({
   </div>
 	
 	<h2>Info</h2>
-  <p>
-	Authors
-	<ul>
-    	<li>Written by <a href="http://yehudakatz.com/">Yehuda Katz</a>.</li>
-		<li> and <a href="http://reinh.com/">Rein Henrichs</a>.</li>
-		<li>Forked and maintained by <a href="http://blog.nikosd.com">Nikos Dimitrakopoulos</a>.</li>
-		<li>Small updates by <a href="http://javier.gr">Javier Gonel</a>.</li>
-	</ul>
-  </p>
   <p>
     Copyright 2007-2009 Yehuda Katz, Rein Henrichs<br/><br/>
     Dual licensed under the MIT and GPL licenses:<br/>
@@ -157,61 +165,7 @@ $("input.autocomplete.weird-names").autocomplete({
   <script type="text/javascript" src="jquery.ui.autocomplete.ext.js"></script>
   <script type="text/javascript" src="jquery.ui.autocomplete.js"></script>
   <script type="text/javascript" src="prettify/prettify.js"></script>
+  <script type="text/javascript" src="prettify/lang-css.js"></script>
   <script type="text/javascript" src="autocomplete.js"></script>
-  <script type="text/javascript">
-  //<![CDATA[
-    jQuery(function($) {
-      if (typeof(window.console) == 'undefined'){
-        window.console = { log: function(msg) { $('#log #updates').html(msg + '<br/>\n' + $('#log #updates').html() ); } };
-        $("#log").show();
-      }
-        
-
-      var birds_list = ["Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel"];
-      $("input.autocomplete.birds").autocomplete({
-        list: birds_list,
-        timeout: 100
-      });
-
-      $("input.autocomplete.big-cats").autocomplete({
-        ajax: "list",
-        timeout: 500,
-        threshold: 2,
-        match: function(typed) { return this.text.match(new RegExp(typed, "i")); },
-        insertText: function(obj) { return obj.text; },
-        templateText: "<li>Available cats: <%= text %></li>"
-      });
-
-      var weird_names_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
-      $("input.autocomplete.weird-names").autocomplete({
-        list: weird_names_list,
-        timeout: 0,
-        match: function(typed) {
-          this.typed = typed;
-          this.pre_match = this.text;
-          this.match = this.post_match = '';
-          if (!this.ajax && !typed || typed.length == 0) { return true; }
-          var match_at = this.text.search(new RegExp("\\b" + typed, "i"));
-          if (match_at != -1) {
-            this.pre_match = this.text.slice(0,match_at);
-            this.match = this.text.slice(match_at,match_at + typed.length);
-            this.post_match = this.text.slice(match_at + typed.length);
-            return true;
-          }
-          return false;
-        },
-        insertText: function(obj) { return obj.text; },
-        templateText: "<li><%= pre_match %><span class='matching' ><%= match %></span><%= post_match %></li>"
-      });
-
-      $("input.autocomplete")
-        .bind("activated.autocomplete", function(e, d) { console.log(d); })
-        .bind("cancelled.autocomplete", function(e) { console.log("Cancelled"); });
-        
-      prettyPrint();
-    });
-  //]]>
-  </script>
-
 </body>
 </html>

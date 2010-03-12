@@ -6,7 +6,15 @@
       color: #aaa;
       font-size: 12px;
 }
+label {display:block}
 
+/* Big bird example */
+ul.mybigbirdlist { display:cell }
+
+/* Prettify changes */
+pre.prettyprint {
+	background-color: #D8D8D8
+}
 /* Log window */
 #log{
      position: fixed;
@@ -18,10 +26,13 @@
      width: 300px;
      text-align: center;
      background-color: white;
+	overflow:auto;
 }
 #log h2{
       font-size: 18px;
       line-height: 30px;
       border-bottom: 1px solid #aaa;
+	margin:0;
+	padding:5px;
 }
 
