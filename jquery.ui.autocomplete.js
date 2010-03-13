@@ -1,5 +1,5 @@
 /**
- * @fileOverviewjQuery Autocomplete
+ * @fileOverview jQuery Autocomplete
  * Version 1.2 (13/03/2010)
  * Written by Yehuda Katz (wycats@gmail.com) and Rein Henrichs (reinh@reinh.com)
  * Additional contributions from Emmanuel Gomez, Austin King, 
@@ -13,11 +13,11 @@
  *
  * @description Form autocomplete plugin using preloaded or Ajax JSON data source
  *
- * @example $('input#user-name').autocomplete({list: ["quentin", "adam", "admin"]})
- * @desc Simple autocomplete with basic JSON data source
+ * Simple autocomplete with basic JSON data source
+ * <code>$('input#user-name').autocomplete({list: ["quentin", "adam", "admin"]});</code>
  *
- * @example $('input#user-name').autocomplete({ajax: "/usernames.js"})
- * @desc Simple autocomplete with Ajax loaded JSON data source
+ * Simple autocomplete with Ajax loaded JSON data source
+ * <code>$('input#user-name').autocomplete({ajax: "/usernames.js"});</code>
  *
  */
 (function($) {
@@ -63,6 +63,9 @@
       maxResults: undefined,
       /**
        * Minumum number of characters needed before starting the autocomplete
+		   * If set to 'undefined', the empty string will be passed to the
+		   * 'filterList' function. This can be used to display
+		   * a full list when no characters are introduced.
        */
       minCharacters: 0,
       /**
@@ -81,10 +84,10 @@
        *
        * @param {string} item data item being tested for match
        * @param {RegExp} matcher regex to test the item with
-       * @return boolean true if this data item matches user input
+       * @return {boolean} true if this data item matches user input
        */
       match: function(item, matcher) {
-        return item.match(matcher);
+        return (item.match(matcher) == undefined);
       },
       /**
        * Called to build the matcher
@@ -106,21 +109,21 @@
       filterList: function(list, val) {
         var matcher = opt.matcher(val),
             grepCallback = function(text, i) {
-			  return opt.match(text, matcher);
-			},
-			index = 0;
+			  			return opt.match(text, matcher);
+						},
+						index = 0;
 			
-		if (this.maxResults) {
-			grepCallback = function(text, i) {
-				if (index>this.maxResults) {
-					return false;
+				if (this.maxResults) {
+					grepCallback = function(text, i) {
+						if (index>this.maxResults) {
+							return false;
+						}
+						index++;
+						return opt.match(text, matcher);
+					};
 				}
-				index++;
-				return opt.match(text, matcher);
-			};
-		}
 
-		return $.grep(list, grepCallback);
+				return $.grep(list, grepCallback);
       },
       /**
        * Update the list of matching items
@@ -202,7 +205,7 @@
        * Provide a value for the text input from the active object,
        * also used to fill the li element in the default _template_ implementation
        *
-       * @param str active item in the list
+       * @param item active item in the list
        */
       insertText: function(item) { return item; }
     }, opt);
