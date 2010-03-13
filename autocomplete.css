@@ -9,7 +9,7 @@
 label {display:block}
 
 /* Big bird example */
-ul.mybigbirdlist { display:cell }
+ul.mybigbirdlist { display: table-cell }
 
 /* Prettify changes */
 pre.prettyprint {
