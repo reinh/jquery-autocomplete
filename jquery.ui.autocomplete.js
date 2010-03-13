@@ -1,12 +1,12 @@
 /**
  * @fileOverviewjQuery Autocomplete
- * Version 1.1 (07/10/2009)
+ * Version 1.2 (13/03/2010)
  * Written by Yehuda Katz (wycats@gmail.com) and Rein Henrichs (reinh@reinh.com)
  * Additional contributions from Emmanuel Gomez, Austin King, 
  * Nikos Dimitrakopoulos, Javier Gonel
  * @requires jQuery v1.2, jQuery dimensions plugin
  *
- * Copyright 2007-2009 Yehuda Katz, Rein Henrichs
+ * Copyright 2007-2010 Yehuda Katz, Rein Henrichs
  * Dual licensed under the MIT and GPL licenses:
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html

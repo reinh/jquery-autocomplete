@@ -1,9 +1,9 @@
 /*
  * jQuery Autocomplete Extensions
- * Version 1.1 (07/10/2009)
+ * Version 1.2 (07/03/2010)
  * Written by Yehuda Katz (wycats@gmail.com) and Rein Henrichs (reinh@reinh.com)
- * Forked and maintained by Nikos Dimitrakopoulos (os@nikosd.com)
  * Additional contributions from Emmanuel Gomez, Austin King
+ * Nikos Dimitrakopoulos, Javier Gonel
  * @requires: jQuery v1.2 or later
  * 
  * Copyright 2007-2009 Yehuda Katz, Rein Henrichs
@@ -14,8 +14,11 @@
  */
 
 (function($) {
+	/** @namespace */
   $.ui = $.ui || {};
+	/** @namespace */
   $.ui.autocomplete = $.ui.autocomplete || {};
+	/** @namespace */
   $.ui.autocomplete.ext = $.ui.autocomplete.ext || {};
   
   /*
