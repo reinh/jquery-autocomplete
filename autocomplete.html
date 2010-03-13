@@ -40,12 +40,13 @@ $("input.autocomplete.birds").autocomplete({
   list: birds_list
 })
       </code></pre>
-	    <h3>More advanced remote JSON example</h3>
+	    <h3>Remote JSON example</h3>
     <p>Basic tweaking and getting the results from a remote web service</p>
     <ul>
       <li>Changing the default list elements type by passing the .text object to matcher and 'insertText' / 'templateText'.</li>
       <li>Overriding the default "match" function with a case-insensitive version</li>
       <li>Using a custom template for the results box (through the "templateText")</li>
+			<li>Uses the <code>autocomplete.ext</code> ajax and templateText plugins.
     </ul>
     <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
       <p>
@@ -63,21 +64,26 @@ $("input.autocomplete.birds").autocomplete({
     <p>The source code :</p>
     <pre class="prettyprint"><code>
 $("input.autocomplete.big-cats").autocomplete({
-  ajax: "list",
-  timeout: 500,
-  threshold: 2,
-  match: function(typed) { return this.text.match(new RegExp(typed, "i")); },
-  insertText: function(obj) { return obj.text },
-  templateText: "&lt;li&gt;Available cats: <%= text %>&lt;/li&gt;"
-})
-      </code></pre>
+	ajax: "list",
+	match: function(element, matcher) {
+		return element.text.match(matcher);
+	},
+	insertText: function(obj) {
+		return obj.text;
+	},
+	templateText: "&lt;li&gt;Available cats: &lt;%= text %&gt;&lt;/li&gt;"
+});
+
+</code></pre>
     
     <h3>A more advanced example</h3>
     <p>
       Tweaking the inner working of the plugin (as above) but with more powerful options
       (notice the "match" and the "templateText" options).
-      <br/>
-      The possibilities are endless...
+			<ul>
+				<li>Modifies the once-per-input matcher to carry information about the text typed.</li>
+				<li>The match function adds information to the matched element to be used when templating it.</li>
+			</ul>
     </p>
     <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
       <p>
@@ -93,31 +99,38 @@ $("input.autocomplete.big-cats").autocomplete({
       </p>
     </form>
     <p>The source code :</p>
-    <pre class="prettyprint"><code>
-var weird_names_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
-$("input.autocomplete.weird-names").autocomplete({
-  list: weird_names_list,
-  timeout: 0,
-  match: function(typed) {
-    this.typed = typed;
-    this.pre_match = this.text;
-    this.match = this.post_match = '';
-    if (!this.ajax &amp;&amp; !typed || typed.length == 0) { return true; }
-    var match_at = this.text.search(new RegExp("\\b" + typed, "i"));
-    if (match_at != -1) {
-      this.pre_match = this.text.slice(0,match_at);
-      this.match = this.text.slice(match_at,match_at + typed.length);
-      this.post_match = this.text.slice(match_at + typed.length);
-      return true;
-    }
-    return false;
-  },
-  insertText: function(obj) { return obj.text },
-  templateText: "&lt;li&gt;<%= pre_match %>&lt;span class='matching' &gt;<%= match %>&lt;/span&gt;<%= post_match %>&lt;/li&gt;"
-});
-      </code></pre>
+		<pre class="prettyprint"><code>
+     var weird_names_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
+      $("input.autocomplete.weird-names").autocomplete({
+        list: weird_names_list,
+        timeout: 0,
+        matcher: function(typed) {
+          if (!typed || typed.length == 0) return undefined;
+          var reg = new RegExp("\\b" + typed, "i");
+          reg.typed = typed;
+          return reg;
+        },
+        match: function(element, matcher) {
+          if (!matcher) { return false; }
+          var typed = matcher.typed;
+          element.typed = typed;
+          element.pre_match = element.text;
+          element.match = element.post_match = '';
+          var match_at = element.text.search(matcher);
+          if (match_at != -1) {
+            element.pre_match = element.text.slice(0,match_at);
+            element.match = element.text.slice(match_at,match_at + typed.length);
+            element.post_match = element.text.slice(match_at + typed.length);
+            return true;
+          }
+          return false;
+        },
+        insertText: function(obj) { return obj.text; },
+        templateText: "&lt;li&gt;&lt;%= pre_match %&gt;&lt;span class='matching' &gt;&lt;%= match %&gt;&lt;/span&gt;&lt;%= post_match %&gt;&lt;/li&gt;"
+      });
+		</code></pre>
 	<h3>Width of the autocomplete box</h3>
-		<p>Did you find too big bird names? Lets autoadjust the size of the autocomplete box.</p>
+		<p>Did you find too big bird names? Let's the css adjust the size of the autocomplete box.</p>
 		<form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
 	    	<label for="bird-name2">
           Local list 
@@ -160,7 +173,7 @@ ul.mybigbirdlist { display:cell }
     <li>http://www.gnu.org/licenses/gpl.html</li>
    </ul>
  
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+  <script type="text/javascript" src="jquery-1.4.2.js"></script>
   <script type="text/javascript" src="jquery.templating.js"></script>
   <script type="text/javascript" src="jquery.ui.autocomplete.ext.js"></script>
   <script type="text/javascript" src="jquery.ui.autocomplete.js"></script>

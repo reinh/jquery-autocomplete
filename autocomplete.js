@@ -27,7 +27,7 @@ jQuery(function($) {
 				wrapper: '<ul class="jq-ui-autocomplete mybigbirdlist"></ul>',
       });
 
-		// 
+		// Simple ajax example
 	$("input.autocomplete.big-cats").autocomplete({
  		ajax: "list",
 		match: function(element, matcher) { 
@@ -39,6 +39,7 @@ jQuery(function($) {
 		templateText: "<li>Available cats: <%= text %></li>"
 	});
 
+		// Advanced matching example
       var weird_names_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
       $("input.autocomplete.weird-names").autocomplete({
         list: weird_names_list,
@@ -67,10 +68,11 @@ jQuery(function($) {
         insertText: function(obj) { return obj.text; },
         templateText: "<li><%= pre_match %><span class='matching' ><%= match %></span><%= post_match %></li>"
       });
-
+	// Console bindings
       $("input.autocomplete")
         .bind("activated.autocomplete", function(e, d) { console.log("activated.autocomplete: "+d); })
         .bind("cancelled.autocomplete", function(e) { console.log("Cancelled"); });
-        
-      prettyPrint();
+	
+	// Put colors in the <pre><Code> for the code samples        
+	prettyPrint();
 });
