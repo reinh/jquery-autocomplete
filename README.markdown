@@ -1,8 +1,8 @@
 # jQuery Autcomplete plugin #
 
-This is a simple but really powerful autocomplete plugin for jQuery
+This is a simple but really powerful autocomplete plugin for jQuery.
 
-It has events and is very customizable.
+It has many events and it's very customizable. Give it a try!
 
 ## Documentation ##
 
