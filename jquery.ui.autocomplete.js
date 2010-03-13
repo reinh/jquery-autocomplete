@@ -1,7 +1,9 @@
-/* jQuery Autocomplete
+/**
+ * @fileOverviewjQuery Autocomplete
  * Version 1.1 (07/10/2009)
  * Written by Yehuda Katz (wycats@gmail.com) and Rein Henrichs (reinh@reinh.com)
- * Additional contributions from Emmanuel Gomez, Austin King, Nikos Dimitrakopoulos, Javier Gonel
+ * Additional contributions from Emmanuel Gomez, Austin King, 
+ * Nikos Dimitrakopoulos, Javier Gonel
  * @requires jQuery v1.2, jQuery dimensions plugin
  *
  * Copyright 2007-2009 Yehuda Katz, Rein Henrichs
@@ -19,9 +21,12 @@
  *
  */
 (function($) {
-
+  /** @namespace */
   $.ui = $.ui || {};
+  
+  /** @namespace */
   $.ui.autocomplete = $.ui.autocomplete || {};
+  
   var active = {};
 
   var KEY = {
@@ -46,7 +51,7 @@
        * How many options are too many?
        * if there are more matches than threshold, the list will not be displayed
        */
-      threshold: 100,
+   	  threshold: 100,
 	  /**
 	   * By default the with of the input box is used for the autocomplete
 	   * suggestions. If you want to change that, specify here a width in pixels.
@@ -74,17 +79,17 @@
       /**
        * Called to determine if a given data item matches the user's input
        *
-       * @param _this_ data item being tested for match
-       * @param _matcher_ regex to test the item with
+       * @param {string} item data item being tested for match
+       * @param {RegExp} matcher regex to test the item with
        * @return boolean true if this data item matches user input
        */
-      match: function(text, matcher) {
-        return text.match(matcher);
+      match: function(item, matcher) {
+        return item.match(matcher);
       },
       /**
        * Called to build the matcher
        *
-       * @param _typed_ the text entered by user in the text input
+       * @param typed the text entered by user in the text input
        * @return regex used to filter the complete list
        */
       matcher: function(typed) {
@@ -239,7 +244,7 @@
         preventTabInAutocompleteMode(e);
       }
     }
-
+    
     return this.each(function() {
       $(this)
         .attr("autocomplete", "off")
