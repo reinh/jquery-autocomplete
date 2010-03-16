@@ -156,7 +156,11 @@ $("input.autocomplete.birds2").autocomplete({
 <pre class="prettyprint lang-css"><code>
 ul.mybigbirdlist { display:cell }
 </code></pre>
-
+	<h3>Autocomplete with scrollbar</h3>
+	<form action="/"><div>
+		<label for="scrollbardemo">Local list: <span class="included-options">A long list with city names, try London</span></label>
+		<input id="scrollbardemo" name="scrollbardemo" type="text" class="autocomplete scrollbardemo" />
+	</div></form>
   <h2>Source &amp; downloads</h2>
   <p>
     Get the source from <a href="http://github.com/ReinH/jquery-autocomplete">github</a> for usage or forking.
@@ -176,6 +180,7 @@ ul.mybigbirdlist { display:cell }
     <li>http://www.gnu.org/licenses/gpl.html</li>
    </ul>
  
+	<script type="text/javascript" src="fixtures.js"></script>
   <script type="text/javascript" src="jquery-1.4.2.js"></script>
   <script type="text/javascript" src="jquery.templating.js"></script>
   <script type="text/javascript" src="jquery.ui.autocomplete.ext.js"></script>

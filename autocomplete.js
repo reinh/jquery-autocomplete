@@ -21,15 +21,15 @@ jQuery(function($) {
       });
 			
 		// Width example	
-      $("input.autocomplete.birds2").autocomplete({
-        list: birds_list,
-				adjustWidth:false,
-				wrapper: '<ul class="jq-ui-autocomplete mybigbirdlist"></ul>',
-      });
+	$("input.autocomplete.birds2").autocomplete({
+		list: birds_list,
+		adjustWidth:false,
+		wrapper: '<ul class="jq-ui-autocomplete mybigbirdlist"></ul>'
+	});
 
 		// Simple ajax example
 	$("input.autocomplete.big-cats").autocomplete({
- 		ajax: "list",
+		ajax: "list",
 		match: function(element, matcher) { 
 			return element.text.match(matcher); 
 		},
@@ -41,15 +41,17 @@ jQuery(function($) {
 
 		// Advanced matching example
       var weird_names_list = [{text: 'Curious George'}, {text: 'George of the Jungle'}, {text: 'Felix the Cat'}];
-      $("input.autocomplete.weird-names").autocomplete({
-        list: weird_names_list,
-        timeout: 0,
-				matcher: function(typed) {
-					if (!typed || typed.length == 0) return undefined;
-					var reg = new RegExp("\\b" + typed, "i");
-					reg.typed = typed;
-					return reg;
-				},
+	$("input.autocomplete.weird-names").autocomplete({
+		list: weird_names_list,
+		timeout: 0,
+		matcher: function(typed) {
+			if (!typed || typed.length === 0) {
+				return undefined;
+			}
+			var reg = new RegExp("\\b" + typed, "i");
+			reg.typed = typed;
+			return reg;
+		},
         match: function(element, matcher) {
 					if (!matcher) { return false; }
 					var typed = matcher.typed;
@@ -68,11 +70,20 @@ jQuery(function($) {
         insertText: function(obj) { return obj.text; },
         templateText: "<li><%= pre_match %><span class='matching' ><%= match %></span><%= post_match %></li>"
       });
+	// Autocomplete with scrollbar
+	$("input.autocomplete.scrollbardemo").autocomplete({
+		list: cities,
+		timeout: 100,
+		threshold: 1000,
+		wrapper: '<ul class="jq-ui-autocomplete scrollbardemo"></ul>'
+	});
 	// Console bindings
-      $("input.autocomplete")
-        .bind("activated.autocomplete", function(e, d) { console.log("activated.autocomplete: "+d); })
-        .bind("cancelled.autocomplete", function(e) { console.log("Cancelled"); });
+	$("input.autocomplete")
+		.bind("activated.autocomplete", function(e, d) { console.log("activated.autocomplete: "+d); })
+		.bind("cancelled.autocomplete", function(e) { console.log("Cancelled"); });
 	
 	// Put colors in the <pre><Code> for the code samples        
 	prettyPrint();
 });
+
+
