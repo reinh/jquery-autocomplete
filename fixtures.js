@@ -1,3 +1,4 @@
+/* Fixtures from http://jquery.bassistance.de/autocomplete/demo/ */
 var cities = [
 	"Aberdeen", "Ada", "Adamsville", "Addyston", "Adelphi", "Adena", "Adrian", "Akron",
 	"Albany", "Alexandria", "Alger", "Alledonia", "Alliance", "Alpha", "Alvada",
