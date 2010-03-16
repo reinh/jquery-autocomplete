@@ -1,5 +1,5 @@
 /**
- * @fileOverview jQuery Autocomplete
+ * @fileoverview jQuery Autocomplete
  * Version 1.2 (13/03/2010)
  * Written by Yehuda Katz (wycats@gmail.com) and Rein Henrichs (reinh@reinh.com)
  * Additional contributions from Emmanuel Gomez, Austin King, 
@@ -87,7 +87,8 @@
 			 * @return {boolean} true if this data item matches user input
 			 */
 			match: function(item, matcher) {
-				return (item.match(matcher) === undefined);
+				// Do not use !==
+				return (item.match(matcher) != undefined);
 			},
 			/**
 			 * Called to build the matcher
@@ -305,20 +306,23 @@
 		});
 
 		$("body").bind("activate.autocomplete", function(e) {
-		// Try hitting return to activate autocomplete and then hitting it again on blank input
-		// to close it.  w/o checking the active object first this input.triggerHandler() will barf.
-		if (active.length) {
-			// if activate and selected -> clicked!
-			input.triggerHandler("activated.autocomplete", [$.data(active[0], "originalObject"), active]);
-		}
-		// if nothing active when activate event and we had a mousedown event before
-		// then the user is dragging something in the list. Ignore action.
-		else if(mouseDown) {
-			mouseDown = false;
-			return false;
-		}
-		$("body").triggerHandler("off.autocomplete");
-	});
+			console.log('activate');
+			// Try hitting return to activate autocomplete and then hitting it again on blank input
+			// to close it.  w/o checking the active object first this input.triggerHandler() will barf.
+			if (active.length) {
+				// if activate and selected -> clicked!
+				input.triggerHandler("activated.autocomplete", [$.data(active[0], "originalObject"), active]);
+			}
+			// if nothing active when activate event and we had a mousedown event before
+			// then the user is dragging something in the list. Ignore action.
+			else if(mouseDown) {
+				mouseDown = false;
+				if(document.activeElement && document.activeElement != input)
+					input.trigger("focus");
+				return false;
+			}
+			$("body").triggerHandler("off.autocomplete");
+		});
 
 	$("body").one("off.autocomplete", function(e, reset) {
 		opt.dismissList(container);
@@ -366,7 +370,7 @@
 			selected = -1;
 			select();
 		})
-		.mousedown(function() { mouseDown = true; })
+		.mousedown(function() { mouseDown = true; console.log('mousedown');})
 		.bind("click.autocomplete", function(e) {
         $("body").triggerHandler("activate.autocomplete");
         $.data(document.body, "suppressKey", false);
