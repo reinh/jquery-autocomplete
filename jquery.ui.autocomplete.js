@@ -294,8 +294,7 @@
 	$.fn.autocompleteMode = function(container, input, size, opt) {
 		var original = input.val(),
 			selected = -1,
-			mouseDown = false,
-			self = this;
+			mouseDown = false;
 
 		$.data(document.body, "autocompleteMode", true);
 
@@ -309,8 +308,11 @@
 		// Try hitting return to activate autocomplete and then hitting it again on blank input
 		// to close it.  w/o checking the active object first this input.triggerHandler() will barf.
 		if (active.length) {
+			// if activate and selected -> clicked!
 			input.triggerHandler("activated.autocomplete", [$.data(active[0], "originalObject"), active]);
 		}
+		// if nothing active when activate event and we had a mousedown event before
+		// then the user is dragging something in the list. Ignore action.
 		else if(mouseDown) {
 			mouseDown = false;
 			return false;
