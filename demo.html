@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>jQuery Autocomplete plugin demo</title>
+    <meta name="generator" content="TextMate http://macromates.com/"/>
+    <meta name="author" content="Yehuda Katz"/>
+    <meta name="author" content="Nikos Dimitrakopoulos"/>
+    <meta name="author" content="Emmanuel Gomez"/>
+    <meta name="author" content="Austin King"/>
+    <meta name="author" content="Javier Gonel"/>
+    <link rel="stylesheet" href="jquery.ui.autocomplete.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="prettify/prettify.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="autocomplete.css" type="text/css" media="screen"/>
+    <link href="style.css.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="container">
+    <h1>jQuery Autocomplete plugin</h1>
+
+    <h3>A really simple example</h3>
+
+    <p>This example uses a local array and the dafault options.</p>
+
+    <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
+        <div>
+            <label for="bird-name">
+                Local list <span class="included-options">("Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel")</span>
+                :
+            </label>
+            <input id="bird-name" name="bird-name" type="text" class="autocomplete birds"/>
+
+            <input type="submit" value="Submit"/>
+        </div>
+    </form>
+
+    <p>The source code :</p>
+    <pre class="prettyprint"><code>
+var birds_list = ["Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel"];
+$("input.autocomplete.birds").autocomplete({
+    list: birds_list
+});
+    </code></pre>
+
+
+    <h3>Remote JSON example</h3>
+
+    <p>Basic tweaking and getting the results from a remote web service</p>
+    <ul>
+        <li>Changing the default list elements type by passing the .text object to matcher and 'insertText' /
+            'templateText'.
+        </li>
+        <li>Overriding the default "match" function with a case-insensitive version</li>
+        <li>Using a custom template for the results box (through the "templateText")</li>
+        <li>Uses the <code>autocomplete.ext</code> ajax and templateText plugins.</li>
+    </ul>
+    <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
+        <p>
+            <label for="big-cat-name">
+                Ajax <span class="included-options">("Jaguar", "Panther", "Tiger", "Leopard", "Snow Leopard" )</span> :
+            </label>
+        </p>
+
+        <p>
+            <input id="big-cat-name" name="big-cat-name" type="text" class="autocomplete big-cats"/>
+        </p>
+
+        <p>
+            <input type="submit" value="Submit"/>
+        </p>
+    </form>
+
+    <p>The source code :</p>
+    <pre class="prettyprint"><code>
+$("input.autocomplete.big-cats").autocomplete({
+    ajax: "list",
+    match: function(element, matcher) {
+        return element.text.match(matcher);
+    },
+    insertText: function(obj) {
+        return obj.text;
+    },
+    templateText: "&lt;li&gt;Available cats: &lt;%= text %>&gt;&lt;li&gt;"
+});
+    </code></pre>
+
+    <h3>A more advanced example</h3>
+
+    <p>
+        Tweaking the inner working of the plugin (as above) but with more powerful options
+        (notice the "match" and the "templateText" options).
+    </p>
+    <ul>
+        <li>Modifies the once-per-input matcher to carry information about the text typed.</li>
+        <li>The match function adds information to the matched element to be used when templating it.</li>
+    </ul>
+
+    <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
+        <p>
+            <label for="weird-name">
+                Local list <span
+                    class="included-options">("Curious George", "George of the Jungle", "Felix the Cat")</span>
+                :
+            </label>
+        </p>
+
+        <p>
+            <input id="weird-name" name="weird-name" type="text" class="autocomplete weird-names"/>
+        </p>
+
+        <p>
+            <input type="submit" value="Submit"/>
+        </p>
+    </form>
+
+    <p>The source code :</p>
+    <pre class="prettyprint"><code>
+var weird_names_list = [
+    {text: 'Curious George'},
+    {text: 'George of the Jungle'},
+    {text: 'Felix the Cat'}
+];
+$("input.autocomplete.weird-names").autocomplete({
+    list: weird_names_list,
+    timeout: 0,
+    matcher: function(typed) {
+        if (!typed || typed.length === 0) {
+            return undefined;
+        }
+        var reg = new RegExp("\\b" + typed, "i");
+        reg.typed = typed;
+        return reg;
+    },
+    match: function(element, matcher) {
+        if (!matcher) {
+            return false;
+        }
+        var typed = matcher.typed;
+        element.typed = typed;
+        element.pre_match = element.text;
+        element.match = element.post_match = '';
+        var match_at = element.text.search(matcher);
+        if (match_at != -1) {
+            element.pre_match = element.text.slice(0, match_at);
+            element.match = element.text.slice(match_at, match_at + typed.length);
+            element.post_match = element.text.slice(match_at + typed.length);
+            return true;
+        }
+        return false;
+    },
+    insertText: function(obj) {
+        return obj.text;
+    },
+    templateText: "&lt;li&gt;&lt;%= pre_match %&gt;&lt;span class='matching' &gt;&lt;%= match %&gt;&lt;/span&gt;&lt;%= post_match %&gt;&lt;/li&gt;"
+});
+        </code></pre>
+    <h3>Width of the autocomplete box</h3>
+
+    <p>Did you find too big bird names? Let's the css adjust the size of the autocomplete box.</p>
+
+    <form onsubmit="alert('Supposed to submit now...'); return false;" action="/">
+        <div>
+            <label for="bird-name2">
+                Local list
+                <span class="included-options">("Barred Antshrike", "Bananaquit", "Copper Rumped Hummingbird", "Whimbrel")</span>
+                :
+            </label>
+            <input id="bird-name2" name="bird-name2" type="text" class="autocomplete birds2"/>
+            <input type="submit" value="Submit"/>
+        </div>
+    </form>
+
+    <p>The source code : </p>
+    <pre class="prettyprint lang-js"><code>
+$("input.autocomplete.birds2").autocomplete({
+    list: birds_list,
+    adjustWidth:false,
+    wrapper: '&lt;ul class="jq-ui-autocomplete mybigbirdlist"&gt;&lt;/ul&gt;'
+});
+    </code></pre>
+
+    <p>And the css:</p>
+    <pre class="prettyprint lang-css"><code>
+ul.mybigbirdlist { display:cell }
+    </code></pre>
+
+
+    <h3>Autocomplete with scrollbar</h3>
+
+    <form action="/">
+        <div>
+            <label for="scrollbardemo">Local list: <span
+                    class="included-options">A long list with city names, try London</span></label>
+            <input id="scrollbardemo" name="scrollbardemo" type="text" class="autocomplete scrollbardemo"/>
+        </div>
+    </form>
+
+    <p>The source code : </p>
+    <pre class="prettyprint lang-js"><code>
+$("input.autocomplete.scrollbardemo").autocomplete({
+    list: cities,
+    timeout: 100,
+    threshold: 1000,
+    wrapper: '&lt;ul class="jq-ui-autocomplete scrollbardemo"&gt;&lt;/ul&gt;'
+});
+    </code></pre>
+
+    <h2>Source &amp; downloads</h2>
+
+    <p>
+        Get the source from <a href="http://github.com/ReinH/jquery-autocomplete">github</a> for usage or forking.
+    </p>
+
+    <div id="log">
+        <h2>Log :</h2>
+
+        <div id="updates"></div>
+    </div>
+
+    <h2>Info</h2>
+
+    <p>
+        Copyright 2007-2009 Yehuda Katz, Rein Henrichs<br/><br/>
+        Dual licensed under the MIT and GPL licenses:<br/>
+    </p>
+    <ul>
+        <li>http://www.opensource.org/licenses/mit-license.php</li>
+        <li>http://www.gnu.org/licenses/gpl.html</li>
+    </ul>
+</div>
+
+<script type="text/javascript" src="fixtures.js"></script>
+<script type="text/javascript" src="jquery-1.4.2.js"></script>
+<script type="text/javascript" src="jquery.templating.js"></script>
+<script type="text/javascript" src="jquery.ui.autocomplete.ext.js"></script>
+<script type="text/javascript" src="jquery.ui.autocomplete.js"></script>
+<script type="text/javascript" src="prettify/prettify.js"></script>
+<script type="text/javascript" src="prettify/lang-css.js"></script>
+<script type="text/javascript" src="autocomplete.js"></script>
+</body>
+</html>
