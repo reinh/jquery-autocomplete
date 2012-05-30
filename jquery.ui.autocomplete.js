@@ -136,7 +136,7 @@
        * @return container (which should be positioned and visible)
        */
       updateList: function(unfilteredList, val) {
-        if (opt.minCharacters && val.length <= opt.minCharacters) {
+        if (typeof opt.minCharacters !== 'undefined' && val.length <= opt.minCharacters) {
           return false;
         }
 
